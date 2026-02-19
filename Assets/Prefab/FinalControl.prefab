@@ -57,7 +57,7 @@ Transform:
   m_GameObject: {fileID: 241518665180283129}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 88.74591, y: -5.294055, z: -1.0368154}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -111,6 +111,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1548285319752805798}
   - {fileID: 7910940680542410827}
   m_Father: {fileID: 3772676371660049770}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -244,22 +245,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 902bb239fd38588468f020fd35b98dec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  holdPoint: {fileID: 7910940680542410827}
-  playerCollider: {fileID: 5788500585902996672}
-  pickupTag: Pickup
-  pickupDistance: 3
-  pickupKey: 101
-  dropKey: 113
-  throwMouseButton: 0
-  holdSmoothSpeed: 25
-  keepUpright: 1
-  throwForce: 8
-  throwUpForce: 1.2
   cam: {fileID: 8292727552736692651}
-  selectableLayer:
+  holdPoint: {fileID: 7910940680542410827}
+  toolHoldPoint: {fileID: 1548285319752805798}
+  playerCollider: {fileID: 5788500585902996672}
+  interactDistance: 3
+  interactLayer:
     serializedVersion: 2
     m_Bits: 4294967295
   selectableTag: Pickup
+  interactKey: 101
+  dropKey: 113
+  throwMouseButton: 0
+  holdSmoothSpeed: 25
+  keepUpright: 0
+  throwForce: 8
+  throwUpForce: 1.2
+  slot1Key: 49
+  slot2Key: 50
+  flashlightToggleKey: 102
+  crowbarUseMouseButton: 0
   highlightMaterial: {fileID: 2100000, guid: 6f1eb8dd8d85aa34493a0fdc3e137474, type: 2}
 --- !u!1 &562857385358260558
 GameObject:
@@ -342,7 +347,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1639276108614967049}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 2
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -354,7 +359,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
@@ -430,7 +435,7 @@ Transform:
   m_GameObject: {fileID: 2482419990430076211}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 88.74591, y: -6.8960547, z: -1.0368154}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -481,7 +486,7 @@ MonoBehaviour:
   moveSpeed: 7
   groundDrag: 5
   sprintSpeed: 12
-  crouchSpeed: 1
+  crouchSpeed: 3
   jumpForce: 6
   jumpCooldown: 0.25
   airMultiplier: 0.4
@@ -547,7 +552,7 @@ Transform:
   m_GameObject: {fileID: 2918464046222662187}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -88.74591, y: 8.296055, z: 1.0368154}
+  m_LocalPosition: {x: 0, y: 1.062, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -555,6 +560,37 @@ Transform:
   - {fileID: 3772676371660049770}
   - {fileID: 6187186883755110336}
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4917179146856470660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1548285319752805798}
+  m_Layer: 0
+  m_Name: ToolHoldPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1548285319752805798
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4917179146856470660}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.6, y: -0.19999999, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6956340335955382592}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5092093491550762359
 GameObject:

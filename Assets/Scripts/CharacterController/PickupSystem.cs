@@ -4,183 +4,207 @@ using UnityEngine;
 public class PickupSystem : MonoBehaviour
 {
     [Header("References")]
-    public Transform holdPoint;               // 相机前的空物体
-    public Collider playerCollider;           // 拖 Player 的 CapsuleCollider 进来（很关键！）
+    public Camera cam;
+    public Transform holdPoint;        // 普通物体手持点（可和工具点共用）
+    public Transform toolHoldPoint;    // 工具装备点（建议单独一个，位置更好调）
+    public Collider playerCollider;    // Player 的 CapsuleCollider
 
-    [Header("Pickup Settings")]
-    public string pickupTag = "Pickup";
-    public float pickupDistance = 3f;
+    [Header("Ray Settings")]
+    public float interactDistance = 3f;
+    public LayerMask interactLayer = ~0;
+    public string selectableTag = "Pickup"; // 用于高亮筛选（可选）
 
     [Header("Input")]
-    public KeyCode pickupKey = KeyCode.E;     // 拾取/放下（切换）
-    public KeyCode dropKey = KeyCode.Q;       // 强制放下
-    public int throwMouseButton = 0;          // 0=左键
+    public KeyCode interactKey = KeyCode.E;
+    public KeyCode dropKey = KeyCode.Q;
+    public int throwMouseButton = 0;
 
-    [Header("Hold")]
+    [Header("Hold (Normal Item)")]
     public float holdSmoothSpeed = 25f;
     public bool keepUpright = false;
 
-    [Header("Throw")]
+    [Header("Throw (Normal Item)")]
     public float throwForce = 8f;
     public float throwUpForce = 1.2f;
 
-    // Selection / Highlight 设置（已内置）
-    [Header("Selection")]
-    public Camera cam;                        // 不设置则自动使用 Camera.main
-    public LayerMask selectableLayer = ~0;
-    public string selectableTag = "Pickup";   // 可选：使用 tag 筛选
-    public Material highlightMaterial;        // 高亮材质（在 Inspector 指定）
+    [Header("Tool Input")]
+    public KeyCode slot1Key = KeyCode.Alpha1;      // Flashlight
+    public KeyCode slot2Key = KeyCode.Alpha2;      // Crowbar
+    public KeyCode flashlightToggleKey = KeyCode.F;
+    public int crowbarUseMouseButton = 0;
 
+    [Header("Highlight")]
+    public Material highlightMaterial;
+
+    // ----- Normal held item -----
     private Rigidbody heldRb;
     private Collider heldCollider;
     private float cooldown;
 
-    // 高亮状态
-    private GameObject currentTarget;
-    private readonly Dictionary<Renderer, Material[]> originalMaterials = new Dictionary<Renderer, Material[]>();
+    // ----- Tools owned -----
+    private readonly Dictionary<ToolType, ToolPickup> ownedTools = new();
+    private ToolType? equippedTool = null;
+
+    // ----- Highlight state -----
+    private Transform currentHighlightRoot;
+    private readonly Dictionary<Renderer, Material[]> savedSharedMats = new();
 
     void Start()
     {
         if (cam == null) cam = Camera.main;
         if (cam == null) Debug.LogWarning("PickupSystem: cam 未设置且 Camera.main 为空。");
-        if (highlightMaterial == null) Debug.LogWarning("PickupSystem: highlightMaterial 未设置，无法高亮显示。");
+        if (highlightMaterial == null) Debug.LogWarning("PickupSystem: highlightMaterial 未设置，高亮将不生效。");
+        if (toolHoldPoint == null) Debug.LogWarning("PickupSystem: toolHoldPoint 未设置（工具拾取将无法放到手上）。");
     }
 
     void Update()
     {
         if (cooldown > 0f) cooldown -= Time.deltaTime;
 
-        // 每帧检测并高亮当前可选目标（仅在未持有物体时）
         UpdateSelection();
 
-        if (Input.GetKeyDown(pickupKey))
+        // 统一交互键：优先拾取工具，其次普通物体；若已拿普通物体则 E=放下
+        if (Input.GetKeyDown(interactKey))
         {
-            if (heldRb == null) TryPickup();
-            else Drop();
+            if (heldRb != null)
+            {
+                DropNormal();
+            }
+            else
+            {
+                InteractTryPickupToolOrNormal();
+            }
         }
 
-        if (Input.GetKeyDown(dropKey))
-        {
-            if (heldRb != null) Drop();
-        }
+        // 普通物体：放下 / 扔出
+        if (Input.GetKeyDown(dropKey) && heldRb != null)
+            DropNormal();
 
-        if (Input.GetMouseButtonDown(throwMouseButton))
-        {
-            if (heldRb != null) Throw();
-        }
+        if (Input.GetMouseButtonDown(throwMouseButton) && heldRb != null)
+            ThrowNormal();
+
+        // 工具：切换与使用
+        if (Input.GetKeyDown(slot1Key)) EquipTool(ToolType.Flashlight);
+        if (Input.GetKeyDown(slot2Key)) EquipTool(ToolType.Crowbar);
+
+        if (Input.GetKeyDown(flashlightToggleKey) && equippedTool == ToolType.Flashlight)
+            ToggleFlashlight();
+
+        if (Input.GetMouseButtonDown(crowbarUseMouseButton) && equippedTool == ToolType.Crowbar)
+            UseCrowbar();
     }
 
     void FixedUpdate()
     {
         if (heldRb == null) return;
 
-        // 如果物体为 kinematic（已被 parent 到 holdPoint），直接精确同步 transform，消除物理抖动
+        // 你喜欢的穿墙方案：kinematic + parent
         if (heldRb.isKinematic)
         {
-            // 直接设定 transform（父级通常已是 holdPoint）
             if (heldRb.transform.parent == holdPoint)
             {
-                // 已经父级到 holdPoint 时，本身 transform 会随父物体自动跟随。
-                // 这里仍强制同步本地 transform（防止少量偏移）
                 heldRb.transform.localPosition = Vector3.zero;
                 heldRb.transform.localRotation = Quaternion.identity;
             }
             else
             {
-                // 未父级的情况下直接对齐世界坐标
                 heldRb.transform.position = holdPoint.position;
                 heldRb.transform.rotation = holdPoint.rotation;
             }
             return;
         }
 
-        // 物理驱动的持有（如果不使用 kinematic）保留原有平滑跟随逻辑
+        // 备用：物理平滑（一般用不到）
         Vector3 targetPos = holdPoint.position;
         Vector3 newPos = Vector3.Lerp(heldRb.position, targetPos, holdSmoothSpeed * Time.fixedDeltaTime);
         heldRb.MovePosition(newPos);
 
         Quaternion targetRot = keepUpright
-            ? Quaternion.LookRotation(transform.forward, Vector3.up)
+            ? Quaternion.LookRotation(cam.transform.forward, Vector3.up)
             : holdPoint.rotation;
 
         Quaternion newRot = Quaternion.Slerp(heldRb.rotation, targetRot, holdSmoothSpeed * Time.fixedDeltaTime);
         heldRb.MoveRotation(newRot);
     }
 
-    void TryPickup()
+    // -------------------- Core Interact --------------------
+
+    void InteractTryPickupToolOrNormal()
     {
-        if (cooldown > 0f) return;
+        if (cooldown > 0f || cam == null) return;
 
-        Ray ray;
-        if (cam != null)
-            ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        else
-            ray = new Ray(transform.position, transform.forward);
+        if (!RaycastCenter(out RaycastHit hit)) return;
 
-        if (!Physics.Raycast(ray, out RaycastHit hit, pickupDistance, selectableLayer)) return;
+        // 1) 优先：工具拾取
+        ToolPickup tool = hit.collider.GetComponentInParent<ToolPickup>();
+        if (tool != null)
+        {
+            PickupTool(tool);
+            return;
+        }
 
-        // 可选 Tag 筛选
-        if (!string.IsNullOrEmpty(selectableTag) && !HasTagInHierarchy(hit.collider.gameObject, selectableTag)) return;
-
-        if (!hit.collider.CompareTag(pickupTag) && !string.IsNullOrEmpty(pickupTag)) return;
+        // 2) 否则：普通物体拾取（要求 Tag=Pickup）
+        if (!hit.collider.CompareTag("Pickup")) return;
 
         Rigidbody rb = hit.collider.attachedRigidbody;
         if (rb == null) return;
 
+        PickupNormal(rb, hit.collider);
+    }
+
+    bool RaycastCenter(out RaycastHit hit)
+    {
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        return Physics.Raycast(ray, out hit, interactDistance, interactLayer);
+    }
+
+    // -------------------- Normal Item --------------------
+
+    void PickupNormal(Rigidbody rb, Collider col)
+    {
         heldRb = rb;
-        heldCollider = hit.collider;
+        heldCollider = col;
 
-        // 清除高亮（拿起后不再高亮）
-        ClearCurrent();
+        ClearHighlight();
 
-        // 忽略与玩家的碰撞（核心稳定点）
         if (playerCollider != null && heldCollider != null)
             Physics.IgnoreCollision(heldCollider, playerCollider, true);
 
-        // 拿起：先清速度
         heldRb.linearVelocity = Vector3.zero;
         heldRb.angularVelocity = Vector3.zero;
 
-        // 选择 kinematic 持有，避免物理抖动
         heldRb.isKinematic = true;
+        heldRb.useGravity = false;
 
-        // 父级到 holdPoint，位置与旋转对齐
         heldRb.transform.SetParent(holdPoint, worldPositionStays: false);
         heldRb.transform.localPosition = Vector3.zero;
         heldRb.transform.localRotation = Quaternion.identity;
 
-        // （可选）关闭重力与阻尼设置（kineamtic 时无效但保留以防切换）
-        heldRb.useGravity = false;
-        heldCollider.enabled = false; // 可选：禁用碰撞器（如果不需要与其他物体交互）
-        heldRb.linearDamping = 10f;
-        heldRb.angularDamping = 10f;
+        // 你想穿墙：不需要禁用 collider，但若你想更“完全无阻”，可以启用这一行
+        // heldCollider.enabled = false;
     }
 
-    public void Drop()
+    public void DropNormal()
     {
         if (heldRb == null) return;
 
-        // 取消父级并恢复物理
         heldRb.transform.SetParent(null);
-        heldCollider.enabled = true; // 确保碰撞器启用
-        RestorePhysics();
+        RestoreNormalPhysics();
 
         heldRb = null;
         heldCollider = null;
         cooldown = 0.15f;
     }
 
-    public void Throw()
+    public void ThrowNormal()
     {
         if (heldRb == null) return;
 
-        // 取消父级并恢复物理
         heldRb.transform.SetParent(null);
-        heldCollider.enabled = true; // 确保碰撞器启用
-        RestorePhysics();
+        RestoreNormalPhysics();
 
-        // 再加冲量（方向用相机 forward）
-        Vector3 impulse = transform.forward * throwForce + Vector3.up * throwUpForce;
+        Vector3 forward = cam != null ? cam.transform.forward : transform.forward;
+        Vector3 impulse = forward * throwForce + Vector3.up * throwUpForce;
         heldRb.AddForce(impulse, ForceMode.Impulse);
 
         heldRb = null;
@@ -188,106 +212,188 @@ public class PickupSystem : MonoBehaviour
         cooldown = 0.2f;
     }
 
-    void RestorePhysics()
+    void RestoreNormalPhysics()
     {
         if (heldRb == null) return;
 
-        // 恢复与玩家碰撞
         if (playerCollider != null && heldCollider != null)
             Physics.IgnoreCollision(heldCollider, playerCollider, false);
 
-        // 恢复物理属性
         heldRb.isKinematic = false;
         heldRb.useGravity = true;
-        heldRb.linearDamping = 0f;
-        heldRb.angularDamping = 0.05f;
-        heldCollider.enabled = true; // 确保碰撞器启用
+
+        // 如果你之前禁用过 collider，记得打开
+        if (heldCollider != null) heldCollider.enabled = true;
     }
 
-    // ----------------- Selection / Highlight 方法 -----------------
+    // -------------------- Tools --------------------
 
-    private void UpdateSelection()
+    void PickupTool(ToolPickup tool)
     {
-        // 仅在未持有物体并且配置了高亮材质时进行高亮检测
-        if (heldRb != null || cam == null || highlightMaterial == null)
+        if (toolHoldPoint == null) return;
+
+        // 已拥有：直接装备
+        if (ownedTools.ContainsKey(tool.toolType))
         {
-            ClearCurrent();
+            EquipTool(tool.toolType);
             return;
         }
 
-        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        if (Physics.Raycast(ray, out RaycastHit hit, pickupDistance, selectableLayer))
+        ownedTools.Add(tool.toolType, tool);
+
+        // 把工具“收进玩家”：变成 toolHoldPoint 的子物体
+        PrepareToolOwned(tool);
+
+        tool.transform.SetParent(toolHoldPoint, worldPositionStays: false);
+        tool.transform.localPosition = tool.holdLocalPosition;
+        tool.transform.localRotation = Quaternion.Euler(tool.holdLocalEuler);
+
+        // 默认装备刚捡到的工具
+        EquipTool(tool.toolType);
+    }
+
+    void PrepareToolOwned(ToolPickup tool)
+    {
+        // 忽略与玩家碰撞，避免卡住
+        var cols = tool.GetComponentsInChildren<Collider>(true);
+        foreach (var c in cols)
         {
-            GameObject hitRoot = hit.collider.gameObject;
-
-            // 如果设置了 tag 则要求命中对象或其父对象带有该 tag
-            if (!string.IsNullOrEmpty(selectableTag) && !HasTagInHierarchy(hitRoot, selectableTag))
-            {
-                ClearCurrent();
-                return;
-            }
-
-            if (hitRoot != currentTarget)
-            {
-                ClearCurrent();
-                ApplyHighlight(hitRoot);
-            }
+            if (c == null) continue;
+            if (playerCollider != null) Physics.IgnoreCollision(c, playerCollider, true);
+            if (tool.disableCollidersWhenOwned) c.enabled = false; // 你想穿墙：true
         }
-        else
+
+        var rb = tool.GetComponent<Rigidbody>();
+        if (rb != null)
         {
-            ClearCurrent();
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.useGravity = false;
+            rb.isKinematic = true;
+        }
+
+        // 工具被收进玩家后，不再参与高亮
+        ClearHighlight();
+    }
+
+    void EquipTool(ToolType type)
+    {
+        if (!ownedTools.ContainsKey(type)) return;
+
+        // 隐藏所有工具
+        foreach (var kv in ownedTools)
+            kv.Value.gameObject.SetActive(false);
+
+        ownedTools[type].gameObject.SetActive(true);
+        equippedTool = type;
+    }
+
+    void ToggleFlashlight()
+    {
+        if (!ownedTools.ContainsKey(ToolType.Flashlight)) return;
+
+        // 手电灯组件建议挂在手电工具模型子物体上
+        Light lightComp = ownedTools[ToolType.Flashlight].GetComponentInChildren<Light>(true);
+        if (lightComp == null) return;
+
+        lightComp.enabled = !lightComp.enabled;
+    }
+
+    void UseCrowbar()
+    {
+        if (cam == null) return;
+
+        Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        if (!Physics.Raycast(ray, out RaycastHit hit, 2f, interactLayer)) return;
+
+        CrowbarTarget target = hit.collider.GetComponentInParent<CrowbarTarget>();
+        if (target == null) return;
+
+        target.PryOpen();
+    }
+
+    // -------------------- Highlight --------------------
+
+    void UpdateSelection()
+    {
+        // 拿着普通物体时不高亮；工具装备不影响高亮（你也可改成不高亮）
+        if (heldRb != null || cam == null || highlightMaterial == null)
+        {
+            ClearHighlight();
+            return;
+        }
+
+        if (!RaycastCenter(out RaycastHit hit))
+        {
+            ClearHighlight();
+            return;
+        }
+
+        // 高亮对象：优先 Rigidbody 根
+        Rigidbody rb = hit.collider.attachedRigidbody;
+        Transform root = rb != null ? rb.transform : hit.collider.transform;
+
+        if (!string.IsNullOrEmpty(selectableTag) && !HasTagInHierarchy(root.gameObject, selectableTag))
+        {
+            ClearHighlight();
+            return;
+        }
+
+        if (currentHighlightRoot != root)
+        {
+            ClearHighlight();
+            ApplyHighlight(root);
         }
     }
 
-    private bool HasTagInHierarchy(GameObject go, string tag)
+    bool HasTagInHierarchy(GameObject go, string tag)
     {
         Transform t = go.transform;
         while (t != null)
         {
-            if (t.gameObject.CompareTag(tag)) return true;
+            if (t.CompareTag(tag)) return true;
             t = t.parent;
         }
         return false;
     }
 
-    private void ApplyHighlight(GameObject target)
+    void ApplyHighlight(Transform root)
     {
-        if (target == null) return;
+        if (root == null) return;
 
-        var renderers = target.GetComponentsInChildren<Renderer>();
+        var renderers = root.GetComponentsInChildren<Renderer>();
         foreach (var r in renderers)
         {
             if (r == null) continue;
-            // 保存原始材质数组（若已保存则跳过）
-            if (!originalMaterials.ContainsKey(r))
-                originalMaterials[r] = r.materials;
 
-            // 用高亮材质替换（保持 sub-mesh 数量）
-            Material[] mats = new Material[r.materials.Length];
-            for (int i = 0; i < mats.Length; i++) mats[i] = highlightMaterial;
-            r.materials = mats;
+            if (!savedSharedMats.ContainsKey(r))
+                savedSharedMats[r] = r.sharedMaterials;
+
+            var mats = r.sharedMaterials;
+            var newMats = new Material[mats.Length];
+            for (int i = 0; i < newMats.Length; i++) newMats[i] = highlightMaterial;
+            r.sharedMaterials = newMats;
         }
 
-        currentTarget = target;
+        currentHighlightRoot = root;
     }
 
-    private void ClearCurrent()
+    void ClearHighlight()
     {
-        if (currentTarget == null) return;
+        if (currentHighlightRoot == null) return;
 
-        foreach (var kv in originalMaterials)
+        foreach (var kv in savedSharedMats)
         {
-            if (kv.Key == null) continue;
-            kv.Key.materials = kv.Value;
+            if (kv.Key != null)
+                kv.Key.sharedMaterials = kv.Value;
         }
 
-        originalMaterials.Clear();
-        currentTarget = null;
+        savedSharedMats.Clear();
+        currentHighlightRoot = null;
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
-        // 确保禁用脚本时恢复材质
-        ClearCurrent();
+        ClearHighlight();
     }
 }
