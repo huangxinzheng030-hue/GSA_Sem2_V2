@@ -6,22 +6,25 @@ using TMPro;
 
 public class SignatureChoiceFlow : MonoBehaviour
 {
-    [Header("UI")]
+    [Header("Buttons")]
     public GameObject buttonsRoot;
     public Button signButton;
     public Button declineButton;
 
-    [Header("Signature Image (UI)")]
+    [Header("Signature (Frame Animation)")]
     public Image signatureImage;
     public Sprite[] signatureFrames;
     public float fps = 24f;
     public bool hideSignatureOnStart = true;
 
-    [Header("Timing")]
-    public float delayBeforeFade = 2.0f;
-    public float holdAfterSignature = 0.0f;
+    [Header("Timing (Sign -> Fade)")]
+    [Tooltip("Wait after the signature animation finishes (stay on the scene).")]
+    public float holdAfterSignature = 2f;
 
-    [Header("Fade & Scene")]
+    [Tooltip("Optional extra delay before starting the fade.")]
+    public float delayBeforeFade = 0f;
+
+    [Header("Fade Overlay (Black Screen)")]
     public CanvasGroup fadeOverlay;
     public float fadeToBlackTime = 0.6f;
 
@@ -34,8 +37,10 @@ public class SignatureChoiceFlow : MonoBehaviour
     public string nextSceneName = "S2";
 
     [Header("Decline -> Threat Flow")]
-    public TMP_Text threatText;
+    public GameObject threatPanel;            // a black background panel (Image) + TMP child
+    public TMP_Text threatText;               // TMP on that panel
     [TextArea(1, 2)] public string threatLine = "You think you still have a way back?";
+    public float threatCharInterval = 0.04f;
     public float threatTextHold = 1.2f;
 
     public AudioSource sfxSource;
@@ -43,7 +48,7 @@ public class SignatureChoiceFlow : MonoBehaviour
     public float chamberDelay = 0.15f;
 
     Coroutine routine;
-    bool forcedSignOnly = false;
+    bool forceSignOnly = false;
 
     void Awake()
     {
@@ -53,31 +58,51 @@ public class SignatureChoiceFlow : MonoBehaviour
 
     void Start()
     {
+        // Buttons default: do NOT show unless you call ShowButtons/ShowSignOnly
+        if (buttonsRoot != null) buttonsRoot.SetActive(false);
+
+        // Signature defaults
         if (signatureImage != null)
         {
+            // keep visible color correct
             signatureImage.color = Color.white;
-            signatureImage.enabled = !hideSignatureOnStart;
-            if (hideSignatureOnStart) signatureImage.sprite = null;
+
+            if (hideSignatureOnStart)
+            {
+                signatureImage.enabled = false;
+                // Do NOT force sprite = null; keep whatever you set in editor as preview
+            }
+            else
+            {
+                signatureImage.enabled = true;
+            }
         }
 
+        // Fade defaults
         if (fadeOverlay != null)
         {
             fadeOverlay.alpha = 0f;
             fadeOverlay.blocksRaycasts = false;
             fadeOverlay.interactable = false;
+            fadeOverlay.gameObject.SetActive(true); // keep active so we can fade anytime
         }
 
-        if (intertitleText != null) intertitleText.gameObject.SetActive(false);
-
-        if (threatText != null)
+        // Intertitle defaults
+        if (intertitleText != null)
         {
-            threatText.gameObject.SetActive(false);
-            threatText.text = "";
+            intertitleText.gameObject.SetActive(false);
         }
+
+        // Threat defaults
+        if (threatPanel != null) threatPanel.SetActive(false);
+        if (threatText != null) threatText.text = "";
     }
 
+    // Call this when camera switch finished (your DialogueTypewriter end)
     public void ShowButtons()
     {
+        forceSignOnly = false;
+
         if (buttonsRoot != null) buttonsRoot.SetActive(true);
 
         if (signButton != null)
@@ -88,22 +113,14 @@ public class SignatureChoiceFlow : MonoBehaviour
 
         if (declineButton != null)
         {
-            declineButton.gameObject.SetActive(!forcedSignOnly);
-            declineButton.interactable = !forcedSignOnly;
+            declineButton.gameObject.SetActive(true);
+            declineButton.interactable = true;
         }
-    }
-
-    void HideAllButtons()
-    {
-        if (signButton != null) signButton.interactable = false;
-        if (declineButton != null) declineButton.interactable = false;
-
-        if (buttonsRoot != null) buttonsRoot.SetActive(false);
     }
 
     void ShowSignOnly()
     {
-        forcedSignOnly = true;
+        forceSignOnly = true;
 
         if (buttonsRoot != null) buttonsRoot.SetActive(true);
 
@@ -120,6 +137,14 @@ public class SignatureChoiceFlow : MonoBehaviour
         }
     }
 
+    void HideButtons()
+    {
+        if (signButton != null) signButton.interactable = false;
+        if (declineButton != null) declineButton.interactable = false;
+
+        if (buttonsRoot != null) buttonsRoot.SetActive(false);
+    }
+
     public void OnSign()
     {
         if (routine != null) return;
@@ -128,16 +153,23 @@ public class SignatureChoiceFlow : MonoBehaviour
 
     IEnumerator SignFlow()
     {
-        HideAllButtons();
+        HideButtons();
 
+        // If coming from threat flow, hide threat UI first
+        if (threatPanel != null) threatPanel.SetActive(false);
+
+        // Play signature frames
         yield return PlaySignatureOnce();
 
+        // Stay on this scene after signing (your request)
         if (holdAfterSignature > 0f)
-            yield return new WaitForSecondsRealtime(holdAfterSignature);
+            yield return new WaitForSeconds(holdAfterSignature);
 
+        // Optional extra delay before fade
         if (delayBeforeFade > 0f)
-            yield return new WaitForSecondsRealtime(delayBeforeFade);
+            yield return new WaitForSeconds(delayBeforeFade);
 
+        // Fade + intertitle + load
         yield return FadeHoldAndLoad(nextSceneName, intertitle, intertitleHoldSeconds);
     }
 
@@ -149,37 +181,43 @@ public class SignatureChoiceFlow : MonoBehaviour
 
     IEnumerator DeclineThreatFlow()
     {
-        HideAllButtons();
+        HideButtons();
 
+        // Show black threat panel
+        if (threatPanel != null) threatPanel.SetActive(true);
+
+        // Typewriter
         if (threatText != null)
         {
-            threatText.text = threatLine;
-            threatText.gameObject.SetActive(true);
+            threatText.text = "";
+            for (int i = 0; i < threatLine.Length; i++)
+            {
+                threatText.text += threatLine[i];
+                yield return new WaitForSeconds(threatCharInterval);
+            }
         }
 
-        if (chamberDelay > 0f)
-            yield return new WaitForSecondsRealtime(chamberDelay);
-
+        // Chamber SFX
         if (sfxSource != null && chamberSfx != null)
+        {
+            if (chamberDelay > 0f) yield return new WaitForSeconds(chamberDelay);
             sfxSource.PlayOneShot(chamberSfx);
+        }
 
         if (threatTextHold > 0f)
-            yield return new WaitForSecondsRealtime(threatTextHold);
+            yield return new WaitForSeconds(threatTextHold);
 
-        if (threatText != null)
-        {
-            threatText.gameObject.SetActive(false);
-            threatText.text = "";
-        }
-
+        // Force only sign option
         ShowSignOnly();
+
+        // Allow sign to be clicked again
         routine = null;
     }
 
     IEnumerator PlaySignatureOnce()
     {
-        if (signatureImage == null || signatureFrames == null || signatureFrames.Length == 0)
-            yield break;
+        if (signatureImage == null) yield break;
+        if (signatureFrames == null || signatureFrames.Length == 0) yield break;
 
         signatureImage.enabled = true;
 
@@ -187,13 +225,16 @@ public class SignatureChoiceFlow : MonoBehaviour
 
         for (int i = 0; i < signatureFrames.Length; i++)
         {
-            signatureImage.sprite = signatureFrames[i];
-            yield return new WaitForSecondsRealtime(frameTime);
+            if (signatureFrames[i] != null)
+                signatureImage.sprite = signatureFrames[i];
+
+            yield return new WaitForSeconds(frameTime);
         }
     }
 
     IEnumerator FadeHoldAndLoad(string sceneName, string title, float holdSeconds)
     {
+        // Fade to black
         if (fadeOverlay != null)
         {
             fadeOverlay.blocksRaycasts = true;
@@ -210,7 +251,7 @@ public class SignatureChoiceFlow : MonoBehaviour
             {
                 while (t < fadeToBlackTime)
                 {
-                    t += Time.unscaledDeltaTime;
+                    t += Time.deltaTime;
                     fadeOverlay.alpha = Mathf.Lerp(from, 1f, t / fadeToBlackTime);
                     yield return null;
                 }
@@ -218,18 +259,20 @@ public class SignatureChoiceFlow : MonoBehaviour
             }
         }
 
+        // Intertitle on black
         if (intertitleText != null && holdSeconds > 0f && !string.IsNullOrEmpty(title))
         {
             intertitleText.text = title;
             intertitleText.gameObject.SetActive(true);
-            yield return new WaitForSecondsRealtime(holdSeconds);
+            yield return new WaitForSeconds(holdSeconds);
             intertitleText.gameObject.SetActive(false);
         }
         else if (holdSeconds > 0f)
         {
-            yield return new WaitForSecondsRealtime(holdSeconds);
+            yield return new WaitForSeconds(holdSeconds);
         }
 
         SceneManager.LoadScene(sceneName);
     }
 }
+
