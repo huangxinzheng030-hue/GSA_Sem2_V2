@@ -6,8 +6,9 @@ public class TextMention : MonoBehaviour
     public GameObject promptUI;
     public GameObject objectToDeactivate; // 在按 F 时要关闭的空物体
     public string sceneToLoad;   // 要跳转的场景名
+    public string portalId;
 
-    private bool playerInRange = false;
+    private bool playerInRange = false;// Inspector填的要和传送门上填的一致
 
     void Start()
     {
@@ -19,6 +20,7 @@ public class TextMention : MonoBehaviour
     {
         if (playerInRange && Input.GetKeyDown(KeyCode.F))
         {
+            AllOfTheGame.Unlock(portalId);
             // 先关闭目标物体（如果有），再切换场景
             if (objectToDeactivate != null)
                 objectToDeactivate.SetActive(false);

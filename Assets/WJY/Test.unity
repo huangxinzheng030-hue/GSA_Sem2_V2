@@ -268,6 +268,7 @@ GameObject:
   - component: {fileID: 205756889}
   - component: {fileID: 205756891}
   - component: {fileID: 205756890}
+  - component: {fileID: 205756892}
   m_Layer: 0
   m_Name: Paint1Transport
   m_TagString: Untagged
@@ -305,6 +306,7 @@ MonoBehaviour:
   promptUI: {fileID: 37792665}
   objectToDeactivate: {fileID: 205756888}
   sceneToLoad: LevelTest
+  portalId: Door1
 --- !u!65 &205756891
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -326,6 +328,20 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 3.81458, y: 3.6675155, z: 2.3610184}
   m_Center: {x: -0.42228174, y: 0.9577652, z: 0.6805092}
+--- !u!114 &205756892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 205756888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6db553c1ffb397c4fa9e119f2d8be738, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portalId: Door1
+  objectToDeactivate: {fileID: 0}
 --- !u!1001 &886341011
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -695,8 +711,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.86, y: 1.0032678, z: 0.91427135}
-  m_Center: {x: -0.08297491, y: 0.0016338825, z: -0.041193962}
+  m_Size: {x: 0.716284, y: 1.0032678, z: 0.75705075}
+  m_Center: {x: -0.011116892, y: 0.0016338825, z: 0.03741634}
 --- !u!23 &1191146134
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -794,6 +810,7 @@ MonoBehaviour:
   promptUI: {fileID: 37792665}
   objectToDeactivate: {fileID: 0}
   sceneToLoad: LevelTest
+  portalId: 
 --- !u!54 &1191146139
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1079,6 +1096,91 @@ MonoBehaviour:
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 0
+--- !u!1 &1746399504
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1746399508}
+  - component: {fileID: 1746399507}
+  - component: {fileID: 1746399506}
+  - component: {fileID: 1746399505}
+  m_Layer: 0
+  m_Name: Paint2Transport
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1746399505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1746399504}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6db553c1ffb397c4fa9e119f2d8be738, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portalId: Door2
+  objectToDeactivate: {fileID: 1746399504}
+--- !u!114 &1746399506
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1746399504}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eddf33ce7dae59b4eb1ff7748d97d56e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  promptUI: {fileID: 37792665}
+  objectToDeactivate: {fileID: 1746399504}
+  sceneToLoad: LevelTest2
+  portalId: Door2
+--- !u!65 &1746399507
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1746399504}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.6970177, y: 1.9998298, z: 1.4162104}
+  m_Center: {x: 0.34850883, y: 0.49991488, z: 0.2081052}
+--- !u!4 &1746399508
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1746399504}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 16.73, y: 3.62, z: -3.02}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1828813576
 GameObject:
   m_ObjectHideFlags: 0
@@ -1090,10 +1192,10 @@ GameObject:
   - component: {fileID: 1828813581}
   - component: {fileID: 1828813580}
   - component: {fileID: 1828813579}
-  - component: {fileID: 1828813578}
   - component: {fileID: 1828813577}
   - component: {fileID: 1828813582}
   - component: {fileID: 1828813583}
+  - component: {fileID: 1828813584}
   m_Layer: 0
   m_Name: paint2
   m_TagString: Untagged
@@ -1108,7 +1210,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1828813576}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eddf33ce7dae59b4eb1ff7748d97d56e, type: 3}
   m_Name: 
@@ -1116,29 +1218,7 @@ MonoBehaviour:
   promptUI: {fileID: 37792665}
   objectToDeactivate: {fileID: 0}
   sceneToLoad: LevelTest2
---- !u!136 &1828813578
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1828813576}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 1.2787104
-  m_Height: 3.3753576
-  m_Direction: 1
-  m_Center: {x: -0.29670215, y: 0.6876788, z: 0.48200795}
+  portalId: 
 --- !u!23 &1828813579
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1248,6 +1328,29 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!136 &1828813584
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1828813576}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5000001
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &1848776063
 GameObject:
   m_ObjectHideFlags: 0
@@ -1438,3 +1541,4 @@ SceneRoots:
   - {fileID: 1848776065}
   - {fileID: 1828813581}
   - {fileID: 205756889}
+  - {fileID: 1746399508}
