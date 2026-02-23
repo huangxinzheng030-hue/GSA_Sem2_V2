@@ -32,6 +32,9 @@ public class PickupSystem : MonoBehaviour
     public KeyCode slot2Key = KeyCode.Alpha2;      // Crowbar
     public KeyCode flashlightToggleKey = KeyCode.F;
     public int crowbarUseMouseButton = 0;
+    public KeyCode throwToolKey = KeyCode.G;
+    public float toolThrowForce = 8f;
+    public float toolThrowUpForce = 1.2f;
 
     [Header("Highlight")]
     public Material highlightMaterial;
@@ -44,7 +47,7 @@ public class PickupSystem : MonoBehaviour
     // ----- Tools owned -----
     private readonly Dictionary<ToolType, ToolPickup> ownedTools = new();
     private ToolType? equippedTool = null;
-
+    private ToolPickup currentEquippedTool;
     // ----- Highlight state -----
     private Transform currentHighlightRoot;
     private readonly Dictionary<Renderer, Material[]> savedSharedMats = new();
@@ -76,6 +79,8 @@ public class PickupSystem : MonoBehaviour
             }
         }
 
+        if (Input.GetKeyDown(throwToolKey))
+            ThrowEquippedTool();
         // 普通物体：放下 / 扔出
         if (Input.GetKeyDown(dropKey) && heldRb != null)
             DropNormal();
@@ -93,6 +98,7 @@ public class PickupSystem : MonoBehaviour
         if (Input.GetMouseButtonDown(crowbarUseMouseButton) && equippedTool == ToolType.Crowbar)
             UseCrowbar();
     }
+
 
     void FixedUpdate()
     {
@@ -203,7 +209,7 @@ public class PickupSystem : MonoBehaviour
         heldRb.transform.SetParent(null);
         RestoreNormalPhysics();
 
-        Vector3 forward = cam != null ? cam.transform.forward : transform.forward;
+        Vector3 forward = cam.transform.forward;
         Vector3 impulse = forward * throwForce + Vector3.up * throwUpForce;
         heldRb.AddForce(impulse, ForceMode.Impulse);
 
@@ -241,12 +247,13 @@ public class PickupSystem : MonoBehaviour
 
         ownedTools.Add(tool.toolType, tool);
 
-        // 把工具“收进玩家”：变成 toolHoldPoint 的子物体
-        PrepareToolOwned(tool);
-
-        tool.transform.SetParent(toolHoldPoint, worldPositionStays: false);
+        // 先把它挂到手上（非常关键：先Parent）
+        tool.transform.SetParent(toolHoldPoint, false);
         tool.transform.localPosition = tool.holdLocalPosition;
         tool.transform.localRotation = Quaternion.Euler(tool.holdLocalEuler);
+
+        // 再处理物理
+        PrepareToolOwned(tool);
 
         // 默认装备刚捡到的工具
         EquipTool(tool.toolType);
@@ -254,41 +261,82 @@ public class PickupSystem : MonoBehaviour
 
     void PrepareToolOwned(ToolPickup tool)
     {
-        // 忽略与玩家碰撞，避免卡住
-        var cols = tool.GetComponentsInChildren<Collider>(true);
-        foreach (var c in cols)
-        {
-            if (c == null) continue;
-            if (playerCollider != null) Physics.IgnoreCollision(c, playerCollider, true);
-            if (tool.disableCollidersWhenOwned) c.enabled = false; // 你想穿墙：true
-        }
-
-        var rb = tool.GetComponent<Rigidbody>();
-        if (rb != null)
+        // 处理所有刚体（防止刚体在子物体上）
+        var rbs = tool.GetComponentsInChildren<Rigidbody>(true);
+        foreach (var rb in rbs)
         {
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             rb.useGravity = false;
             rb.isKinematic = true;
+            rb.interpolation = RigidbodyInterpolation.None;
         }
 
-        // 工具被收进玩家后，不再参与高亮
+        // 忽略与玩家碰撞
+        var cols = tool.GetComponentsInChildren<Collider>(true);
+        foreach (var c in cols)
+        {
+            if (c == null) continue;
+            if (playerCollider != null) Physics.IgnoreCollision(c, playerCollider, true);
+            if (tool.disableCollidersWhenOwned) c.enabled = false;
+        }
+
         ClearHighlight();
     }
-
     void EquipTool(ToolType type)
     {
         if (!ownedTools.ContainsKey(type)) return;
 
-        // 隐藏所有工具
         foreach (var kv in ownedTools)
             kv.Value.gameObject.SetActive(false);
 
         ownedTools[type].gameObject.SetActive(true);
         equippedTool = type;
+
+        // 记录当前工具
+        currentEquippedTool = ownedTools[type];
     }
 
-    void ToggleFlashlight()
+    void ThrowEquippedTool()
+    {
+        if (!equippedTool.HasValue) return;
+        if (!ownedTools.ContainsKey(equippedTool.Value)) return;
+
+        ToolPickup tool = ownedTools[equippedTool.Value];
+        if (tool == null) return;
+
+        // 解除父子关系（保持当前位置）
+        tool.transform.SetParent(null, true);
+
+        // 恢复刚体，让它自然掉落
+        var rbs = tool.GetComponentsInChildren<Rigidbody>(true);
+        foreach (var rb in rbs)
+        {
+            if (rb == null) continue;
+
+            rb.isKinematic = false;
+            rb.useGravity = true;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        // 恢复碰撞
+        var cols = tool.GetComponentsInChildren<Collider>(true);
+        foreach (var c in cols)
+        {
+            if (c == null) continue;
+            c.enabled = true;
+
+            if (playerCollider != null)
+                Physics.IgnoreCollision(c, playerCollider, false);
+        }
+
+        // 清除装备状态
+        ownedTools.Remove(equippedTool.Value);
+        equippedTool = null;
+        currentEquippedTool = null;
+    }
+        void ToggleFlashlight()
     {
         if (!ownedTools.ContainsKey(ToolType.Flashlight)) return;
 
@@ -395,5 +443,24 @@ public class PickupSystem : MonoBehaviour
     void OnDisable()
     {
         ClearHighlight();
+    }
+
+    void LateUpdate()
+    {
+
+        if (currentEquippedTool == null || toolHoldPoint == null || cam == null)return;
+
+        Transform tool = currentEquippedTool.transform;
+
+        // 确保在 toolHoldPoint 下面
+        if (tool.parent != toolHoldPoint)
+            tool.SetParent(toolHoldPoint, false);
+
+        // 保持位置偏移
+        tool.localPosition = currentEquippedTool.holdLocalPosition;
+
+        // 永远朝向准星
+        tool.rotation = cam.transform.rotation *
+                        Quaternion.Euler(currentEquippedTool.holdLocalEuler);
     }
 }
