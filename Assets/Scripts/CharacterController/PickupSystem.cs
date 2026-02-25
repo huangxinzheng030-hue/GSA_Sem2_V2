@@ -52,6 +52,9 @@ public class PickupSystem : MonoBehaviour
     private Transform currentHighlightRoot;
     private readonly Dictionary<Renderer, Material[]> savedSharedMats = new();
 
+    // ----- Inventory reference (for UI) -----
+    public PlayerInventory inventory;
+
     void Start()
     {
         if (cam == null) cam = Camera.main;
@@ -97,6 +100,14 @@ public class PickupSystem : MonoBehaviour
 
         if (Input.GetMouseButtonDown(crowbarUseMouseButton) && equippedTool == ToolType.Crowbar)
             UseCrowbar();
+
+        // 1~9 切换（示例：只写1、2，你可以扩到9）
+        if (Input.GetKeyDown(KeyCode.Alpha1)) inventory.SelectSlot(0);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) inventory.SelectSlot(1);
+        // ...Alpha9 => SelectSlot(8)
+
+        // G 丢弃当前槽位工具（自然下落）
+        if (Input.GetKeyDown(KeyCode.G)) inventory.DropSelectedTool();
     }
 
 
@@ -156,6 +167,16 @@ public class PickupSystem : MonoBehaviour
         if (rb == null) return;
 
         PickupNormal(rb, hit.collider);
+        ToolItem toolItem = hit.collider.GetComponentInParent<ToolItem>();
+        if (toolItem != null)
+        {
+            if (inventory != null)
+            {
+                bool ok = inventory.AddTool(toolItem);
+                // 背包满了就不捡
+                if (ok) return;
+            }
+        }
     }
 
     bool RaycastCenter(out RaycastHit hit)
