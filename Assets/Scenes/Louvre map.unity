@@ -23716,6 +23716,91 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 444440829112782790, guid: b694633087ef13544b3df7f45e18b105, type: 3}
+--- !u!1 &1228704605
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1228704609}
+  - component: {fileID: 1228704608}
+  - component: {fileID: 1228704607}
+  - component: {fileID: 1228704606}
+  m_Layer: 0
+  m_Name: paintPortal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1228704606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228704605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6db553c1ffb397c4fa9e119f2d8be738, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portalId: paint1
+  objectToDeactivate: {fileID: 0}
+--- !u!114 &1228704607
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228704605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eddf33ce7dae59b4eb1ff7748d97d56e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  promptUI: {fileID: 1791548073}
+  objectToDeactivate: {fileID: 1228704605}
+  sceneToLoad: Puzzle scene1
+  portalId: paint1
+--- !u!65 &1228704608
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228704605}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3.1117134, y: 5.276911, z: 2.2083592}
+  m_Center: {x: 0.23599434, y: -0.94144344, z: 0.6041796}
+--- !u!4 &1228704609
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228704605}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 14.47, y: 2.22, z: -7.47}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1229354718
 GameObject:
   m_ObjectHideFlags: 0
@@ -41784,9 +41869,10 @@ GameObject:
   - component: {fileID: 1935414295}
   - component: {fileID: 1935414298}
   - component: {fileID: 1935414297}
+  - component: {fileID: 1935414299}
   m_Layer: 0
   m_Name: Saint John
-  m_TagString: Pickup
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -41908,6 +41994,20 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1935414299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1935414293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f32e27983b9dba548881d59f35e83d39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unlockId: 1
+  collectibleTag: Pickup
 --- !u!1 &1938431344 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6827532375247399547, guid: b694633087ef13544b3df7f45e18b105, type: 3}
@@ -45706,3 +45806,4 @@ SceneRoots:
   - {fileID: 254285083}
   - {fileID: 1349268262}
   - {fileID: 4274551}
+  - {fileID: 1228704609}
