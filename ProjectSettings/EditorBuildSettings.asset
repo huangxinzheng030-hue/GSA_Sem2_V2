@@ -5,10 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/ZHX/Scenes/s1.unity
     guid: 99c9720ab356a0642a771bea13969a05
-  - enabled: 0
+  - enabled: 1
     path: Assets/ZHX/Scenes/S2.unity
     guid: 252acbba8284a40478e130480cc19181
   - enabled: 1
@@ -26,12 +26,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/WJY/LevelTest2.unity
     guid: 2477a85d07f506d48a3b0159573afb59
-  - enabled: 0
-    path: Assets/XHQ/Scenes/1.unity
-    guid: 04c2e6117cbe40a4d9d184b64222c29e
-  - enabled: 0
-    path: Assets/XHQ/Scenes/2.unity
-    guid: 09ff886b26147ba40b0a8af636689e28
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
