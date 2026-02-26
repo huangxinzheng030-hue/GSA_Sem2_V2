@@ -17,6 +17,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Gabriel/Puzzle scene1.unity
     guid: a269b60496418d94083a92e320215f44
+  - enabled: 1
+    path: Assets/WJY/Test.unity
+    guid: fadddf44e261cf049b80225568105401
+  - enabled: 1
+    path: Assets/WJY/LevelTest.unity
+    guid: c9c5351569395af4ab8cbb6a70620f74
+  - enabled: 1
+    path: Assets/WJY/LevelTest2.unity
+    guid: 2477a85d07f506d48a3b0159573afb59
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
