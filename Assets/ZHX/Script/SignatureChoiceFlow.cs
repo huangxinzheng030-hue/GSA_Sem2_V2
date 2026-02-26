@@ -37,18 +37,26 @@ public class SignatureChoiceFlow : MonoBehaviour
     public string nextSceneName = "S2";
 
     [Header("Decline -> Threat Flow")]
-    public GameObject threatPanel;            // a black background panel (Image) + TMP child
-    public TMP_Text threatText;               // TMP on that panel
+    public GameObject threatPanel;
+    public TMP_Text threatText;
     [TextArea(1, 2)] public string threatLine = "You think you still have a way back?";
     public float threatCharInterval = 0.04f;
     public float threatTextHold = 1.2f;
 
-    public AudioSource sfxSource;
+    [Header("SFX (Signature Writing)")]
+    public AudioSource writingSfxSource;
+    public AudioClip writingClip;
+    [Range(0f, 1f)] public float writingVolume = 0.8f;
+    public bool loopWritingSfx = true;
+    public float writingStartDelay = 0f;
+
+    [Header("SFX (Threat / Chamber)")]
+    public AudioSource threatSfxSource;
     public AudioClip chamberSfx;
     public float chamberDelay = 0.15f;
 
     Coroutine routine;
-    bool forceSignOnly = false;
+    Coroutine writingSfxRoutine;
 
     void Awake()
     {
@@ -64,13 +72,12 @@ public class SignatureChoiceFlow : MonoBehaviour
         // Signature defaults
         if (signatureImage != null)
         {
-            // keep visible color correct
             signatureImage.color = Color.white;
 
             if (hideSignatureOnStart)
             {
                 signatureImage.enabled = false;
-                // Do NOT force sprite = null; keep whatever you set in editor as preview
+                // Do NOT clear sprite here; keep your editor preview
             }
             else
             {
@@ -84,7 +91,7 @@ public class SignatureChoiceFlow : MonoBehaviour
             fadeOverlay.alpha = 0f;
             fadeOverlay.blocksRaycasts = false;
             fadeOverlay.interactable = false;
-            fadeOverlay.gameObject.SetActive(true); // keep active so we can fade anytime
+            fadeOverlay.gameObject.SetActive(true);
         }
 
         // Intertitle defaults
@@ -96,13 +103,13 @@ public class SignatureChoiceFlow : MonoBehaviour
         // Threat defaults
         if (threatPanel != null) threatPanel.SetActive(false);
         if (threatText != null) threatText.text = "";
+
+        StopWritingSfx();
     }
 
     // Call this when camera switch finished (your DialogueTypewriter end)
     public void ShowButtons()
     {
-        forceSignOnly = false;
-
         if (buttonsRoot != null) buttonsRoot.SetActive(true);
 
         if (signButton != null)
@@ -120,8 +127,6 @@ public class SignatureChoiceFlow : MonoBehaviour
 
     void ShowSignOnly()
     {
-        forceSignOnly = true;
-
         if (buttonsRoot != null) buttonsRoot.SetActive(true);
 
         if (signButton != null)
@@ -155,17 +160,22 @@ public class SignatureChoiceFlow : MonoBehaviour
     {
         HideButtons();
 
-        // If coming from threat flow, hide threat UI first
         if (threatPanel != null) threatPanel.SetActive(false);
+
+        // Start writing sfx (optional)
+        StartWritingSfx();
 
         // Play signature frames
         yield return PlaySignatureOnce();
 
-        // Stay on this scene after signing (your request)
+        // Stop writing sfx when signature finishes
+        StopWritingSfx();
+
+        // Hold on scene after signature
         if (holdAfterSignature > 0f)
             yield return new WaitForSeconds(holdAfterSignature);
 
-        // Optional extra delay before fade
+        // Optional delay before fade
         if (delayBeforeFade > 0f)
             yield return new WaitForSeconds(delayBeforeFade);
 
@@ -183,25 +193,31 @@ public class SignatureChoiceFlow : MonoBehaviour
     {
         HideButtons();
 
-        // Show black threat panel
+        // Show threat panel (black background)
         if (threatPanel != null) threatPanel.SetActive(true);
 
         // Typewriter
         if (threatText != null)
         {
             threatText.text = "";
-            for (int i = 0; i < threatLine.Length; i++)
+            if (!string.IsNullOrEmpty(threatLine))
             {
-                threatText.text += threatLine[i];
-                yield return new WaitForSeconds(threatCharInterval);
+                for (int i = 0; i < threatLine.Length; i++)
+                {
+                    threatText.text += threatLine[i];
+                    if (threatCharInterval > 0f)
+                        yield return new WaitForSeconds(threatCharInterval);
+                    else
+                        yield return null;
+                }
             }
         }
 
         // Chamber SFX
-        if (sfxSource != null && chamberSfx != null)
+        if (threatSfxSource != null && chamberSfx != null)
         {
             if (chamberDelay > 0f) yield return new WaitForSeconds(chamberDelay);
-            sfxSource.PlayOneShot(chamberSfx);
+            threatSfxSource.PlayOneShot(chamberSfx);
         }
 
         if (threatTextHold > 0f)
@@ -210,7 +226,7 @@ public class SignatureChoiceFlow : MonoBehaviour
         // Force only sign option
         ShowSignOnly();
 
-        // Allow sign to be clicked again
+        // Allow sign to be clicked now
         routine = null;
     }
 
@@ -228,7 +244,53 @@ public class SignatureChoiceFlow : MonoBehaviour
             if (signatureFrames[i] != null)
                 signatureImage.sprite = signatureFrames[i];
 
-            yield return new WaitForSeconds(frameTime);
+            if (frameTime > 0f)
+                yield return new WaitForSeconds(frameTime);
+            else
+                yield return null;
+        }
+    }
+
+    void StartWritingSfx()
+    {
+        // If no clip/source, do nothing
+        if (writingSfxSource == null || writingClip == null) return;
+
+        // Avoid stacking
+        StopWritingSfx();
+
+        writingSfxRoutine = StartCoroutine(WritingSfxRoutine());
+    }
+
+    IEnumerator WritingSfxRoutine()
+    {
+        if (writingStartDelay > 0f)
+            yield return new WaitForSeconds(writingStartDelay);
+
+        if (writingSfxSource == null || writingClip == null) yield break;
+
+        writingSfxSource.loop = loopWritingSfx;
+        writingSfxSource.volume = writingVolume;
+        writingSfxSource.clip = writingClip;
+        writingSfxSource.Play();
+    }
+
+    void StopWritingSfx()
+    {
+        if (writingSfxRoutine != null)
+        {
+            StopCoroutine(writingSfxRoutine);
+            writingSfxRoutine = null;
+        }
+
+        if (writingSfxSource != null)
+        {
+            // Stop only if we are actually using the writing clip
+            if (writingSfxSource.clip == writingClip)
+            {
+                writingSfxSource.Stop();
+                writingSfxSource.clip = null;
+            }
         }
     }
 
@@ -275,4 +337,3 @@ public class SignatureChoiceFlow : MonoBehaviour
         SceneManager.LoadScene(sceneName);
     }
 }
-
