@@ -782,7 +782,7 @@ MonoBehaviour:
   mazeObject: {fileID: 391019938}
   painting: {fileID: 160422075}
   unlockSound: {fileID: 818658310}
-  pauseDelay: 1.5
+  pauseDelay: 1
   slideSpeed: 8
   fallDistance: 25
 --- !u!1 &832575517
