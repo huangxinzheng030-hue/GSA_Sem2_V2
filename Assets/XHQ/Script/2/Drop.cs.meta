@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8fb5bfe2e3fd2c640864a38a91139806
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - mazeObject: {fileID: 919132149155446097, guid: ec04273f2985c7241a9bf7fb2c828183, type: 3}
+  - painting: {fileID: 919132149155446097, guid: f9d61774405a37349b0afa2eabc72bf7, type: 3}
+  - unlockSound: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
