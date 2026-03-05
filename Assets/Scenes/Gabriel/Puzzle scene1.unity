@@ -204,7 +204,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 543786431}
         m_TargetAssemblyTypeName: GameController, Assembly-CSharp
-        m_MethodName: RestartLevel
+        m_MethodName: CompletedAndReturn
         m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2538,6 +2538,7 @@ GameObject:
   m_Component:
   - component: {fileID: 543786432}
   - component: {fileID: 543786431}
+  - component: {fileID: 543786433}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -2557,7 +2558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7106fe1ecfd4fa40a60a77ac258cb96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unlockId: 
+  unlockId: 1
 --- !u!4 &543786432
 Transform:
   m_ObjectHideFlags: 0
@@ -2573,6 +2574,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &543786433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 543786430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b8adba3e14227b4f9b90086ca90740a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &583964644
 GameObject:
   m_ObjectHideFlags: 0
@@ -5308,8 +5321,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 53abd1c9af0c7ff41a1dfcebfef420d7, type: 2}
-  m_sharedMaterial: {fileID: -8651433635066424379, guid: 53abd1c9af0c7ff41a1dfcebfef420d7, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2baa7a4f77296964e817cbf7bfb113d6, type: 2}
+  m_sharedMaterial: {fileID: 1885509859789963636, guid: 2baa7a4f77296964e817cbf7bfb113d6, type: 2}
   m_fontSharedMaterials:
   - {fileID: -8651433635066424379, guid: 53abd1c9af0c7ff41a1dfcebfef420d7, type: 2}
   m_fontMaterial: {fileID: 0}

@@ -265,7 +265,11 @@ MonoBehaviour:
   slot2Key: 50
   flashlightToggleKey: 102
   crowbarUseMouseButton: 0
+  throwToolKey: 103
+  toolThrowForce: 8
+  toolThrowUpForce: 1.2
   highlightMaterial: {fileID: 2100000, guid: 6f1eb8dd8d85aa34493a0fdc3e137474, type: 2}
+  inventory: {fileID: 0}
 --- !u!1 &562857385358260558
 GameObject:
   m_ObjectHideFlags: 0
@@ -435,7 +439,7 @@ Transform:
   m_GameObject: {fileID: 2482419990430076211}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 233.9, y: 158.5, z: -12.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -688,13 +692,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6720675428176487645}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.2, z: 1.5}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6956340335955382592}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &8197244905850474227
 GameObject:
   m_ObjectHideFlags: 0
