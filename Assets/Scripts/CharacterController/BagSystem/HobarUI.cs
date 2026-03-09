@@ -37,6 +37,7 @@ public class HotbarUI : MonoBehaviour
 
             if (slotHighlights != null && i < slotHighlights.Length && slotHighlights[i] != null)
                 slotHighlights[i].enabled = (i == inventory.SelectedIndex);
+            if (tool != null) Debug.Log($"UI slot {i}: tool={tool.name}, data={(tool.data ? tool.data.name : "NULL")}");
         }
     }
 }

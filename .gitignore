@@ -97,3 +97,22 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+Assets/Art Sources/Icons/noun-cross.png
+Assets/Art Sources/Icons/noun-cross.png.meta
+Assets/LZX/FirstPersonPlay.unity
+Assets/Scripts/CharacterController/BagSystem.cs
+Assets/Scripts/CharacterController/BagSystem.cs.meta
+Assets/Scripts/CharacterController/CameraController.cs
+Assets/Scripts/CharacterController/HobarUI.cs
+Assets/Scripts/CharacterController/HobarUI.cs.meta
+Assets/Scripts/CharacterController/PlayerInventory.cs
+Assets/Scripts/CharacterController/PlayerInventory.cs.meta
+Assets/Scripts/CharacterController/ToolData.cs
+Assets/Scripts/CharacterController/ToolData.cs.meta
+Assets/Scripts/CharacterController/ToolItem.cs
+Assets/Scripts/CharacterController/ToolItem.cs.meta
+Assets/Scripts/CharacterController/ToolPickup.cs
+Assets/Scripts/CharacterController/ToolType.cs
+Assets/Scripts/CharacterController/ToolType.cs.meta
+Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/LiberationSans SDF - Metalic Green.mat
+Assets/Scripts/CharacterController/HobarUI.cs
