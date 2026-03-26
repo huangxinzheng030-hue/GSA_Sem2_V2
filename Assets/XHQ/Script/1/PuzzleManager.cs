@@ -1,39 +1,48 @@
 using UnityEngine;
 using System.Collections;
-using Unity.Cinemachine;
 
 public class PuzzleManager : MonoBehaviour
 {
-    public PuzzleRing[] rings;      
-    public Animator safeAnimator; 
-    public GameObject detailCamera; 
-    public float blendWaitTime = 2.0f; 
-    public AudioClip winSound;      
-    private AudioSource audioSource;
+    [Header("关联组件")]
+    public PuzzleRing[] rings;      // 留空则自动寻找
+    public GameObject detailCamera; // 近景相机
+    public Animator safeAnimator;   // 保险箱Animator
+
+    [Header("时间参数")]
+    public float dissolveTime = 1.5f;   // 溶解时长
+    public float blendWaitTime = 2.0f;  // 相机拉远时长（需与Brain设置一致）
+
     private bool hasWon = false;
 
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
-
-        // 核心：启动即推近
-        if (detailCamera != null) 
+        // --- 核心修复：自动寻找圆环 ---
+        if (rings == null || rings.Length == 0)
         {
-            detailCamera.SetActive(true); 
+            rings = GetComponentsInChildren<PuzzleRing>();
+            Debug.Log($"<color=cyan>PuzzleManager:</color> 自动找到了 {rings.Length} 个圆环");
+        }
+
+        // 初始自动从远及近（前提是相机优先级已设好，detailCamera初始Inactive）
+        if (detailCamera != null)
+        {
+            detailCamera.SetActive(true);
         }
     }
 
     void Update()
     {
-        if (!hasWon && CheckWinCondition())
+        if (!hasWon && CheckAllRings())
         {
+            hasWon = true; // 锁定逻辑
             StartCoroutine(WinSequence());
         }
     }
 
-    bool CheckWinCondition()
+    bool CheckAllRings()
     {
-        foreach (PuzzleRing ring in rings)
+        if (rings.Length == 0) return false;
+        foreach (var ring in rings)
         {
             if (ring == null || !ring.IsCorrect()) return false;
         }
@@ -42,16 +51,31 @@ public class PuzzleManager : MonoBehaviour
 
     IEnumerator WinSequence()
     {
-        hasWon = true;
-        
-        // 1. 播放动画
-        if (winSound != null) audioSource.PlayOneShot(winSound);
-        if (safeAnimator != null) safeAnimator.SetTrigger("OpenSafe");
+        Debug.Log("<color=green>解密成功！</color> 开始执行后续动画...");
 
-        // 2. 欣赏动画
+        // 1. 锁定并溶解图标
+        foreach (var ring in rings)
+        {
+            ring.LockRing();
+            StartCoroutine(ring.DissolveRoutine(dissolveTime));
+        }
+        yield return new WaitForSeconds(dissolveTime);
+
+        // 2. 拉远相机
+        if (detailCamera != null)
+        {
+            detailCamera.SetActive(false);
+            Debug.Log("正在拉远相机...");
+        }
+
+        // 等待相机飞行到位
         yield return new WaitForSeconds(blendWaitTime);
 
-        // 3. 自动拉远
-        if (detailCamera != null) detailCamera.SetActive(false);
+        // 3. 开启保险箱
+        if (safeAnimator != null)
+        {
+            safeAnimator.SetTrigger("OpenSafe");
+            Debug.Log("保险箱开启！");
+        }
     }
 }

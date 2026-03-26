@@ -435,7 +435,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1033600536}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 1, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
   m_LocalPosition: {x: 12.700012, y: -64.74777, z: -189.38016}
   m_LocalScale: {x: 20.668976, y: 20.668976, z: 20.668976}
   m_ConstrainProportionsScale: 0
@@ -454,10 +454,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d315de2277459e941aedc18dfa3ba00c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  correctAngle: 0
-  rotateSpeed: 200
-  tolerance: 2
-  clickSound: {fileID: 8300000, guid: 7ce5aed161a3da1468e3817c8686c1af, type: 3}
+  correctAngles:
+  - 0
+  tolerance: 10
+  rotateStep: 30
 --- !u!212 &1033600539
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -481,7 +481,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: 8d970ce3d8975a44fa1794207d6607de, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -503,7 +503,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: e202161ba2649ee40a2d70affd185527, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2026,10 +2026,10 @@ MonoBehaviour:
   - {fileID: 1033600538}
   - {fileID: 1756957718}
   - {fileID: 2129206207}
-  safeAnimator: {fileID: 866000840}
   detailCamera: {fileID: 788331368}
-  blendWaitTime: 1
-  winSound: {fileID: 8300000, guid: 08aaa20c2d570a242b47f603dedb889c, type: 3}
+  safeAnimator: {fileID: 866000840}
+  dissolveTime: 1.5
+  blendWaitTime: 2
 --- !u!4 &1099987671
 Transform:
   m_ObjectHideFlags: 0
@@ -2249,7 +2249,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1756957716}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: -0.7071068}
+  m_LocalRotation: {x: 0, y: -0, z: 0.7071068, w: -0.7071068}
   m_LocalPosition: {x: 12.700012, y: -64.74777, z: -189.38016}
   m_LocalScale: {x: 20.668974, y: 20.668974, z: 20.668976}
   m_ConstrainProportionsScale: 0
@@ -2268,10 +2268,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d315de2277459e941aedc18dfa3ba00c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  correctAngle: 0
-  rotateSpeed: 200
-  tolerance: 2
-  clickSound: {fileID: 8300000, guid: 7ce5aed161a3da1468e3817c8686c1af, type: 3}
+  correctAngles:
+  - 0
+  tolerance: 10
+  rotateStep: 30
 --- !u!212 &1756957719
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2295,7 +2295,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: 8d970ce3d8975a44fa1794207d6607de, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2317,7 +2317,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 68f2ac95cd56ec74f85a4c9f9efaa391, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3597,13 +3597,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2129206205}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: -0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 12.700012, y: -64.74777, z: -189.38016}
   m_LocalScale: {x: 20.668974, y: 20.668974, z: 20.668976}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 780399602}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 270}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!114 &2129206207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3616,10 +3616,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d315de2277459e941aedc18dfa3ba00c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  correctAngle: 0
-  rotateSpeed: 200
-  tolerance: 2
-  clickSound: {fileID: 8300000, guid: 7ce5aed161a3da1468e3817c8686c1af, type: 3}
+  correctAngles:
+  - 0
+  tolerance: 10
+  rotateStep: 30
 --- !u!212 &2129206208
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3643,7 +3643,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: 8d970ce3d8975a44fa1794207d6607de, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3665,7 +3665,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: dd574bb3920eda949a2087f66d5bee55, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -6162,7 +6162,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2132802988}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: 0.7071068, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 12.700012, y: -64.74777, z: -189.38016}
   m_LocalScale: {x: 20.668974, y: 20.668974, z: 20.668976}
   m_ConstrainProportionsScale: 0
@@ -6181,10 +6181,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d315de2277459e941aedc18dfa3ba00c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  correctAngle: 0
-  rotateSpeed: 200
-  tolerance: 2
-  clickSound: {fileID: 8300000, guid: 7ce5aed161a3da1468e3817c8686c1af, type: 3}
+  correctAngles:
+  - 0
+  tolerance: 10
+  rotateStep: 30
 --- !u!212 &2132802991
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -6208,7 +6208,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: 8d970ce3d8975a44fa1794207d6607de, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -6230,7 +6230,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 3545df0096f15c24da53a03297eda0ea, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
