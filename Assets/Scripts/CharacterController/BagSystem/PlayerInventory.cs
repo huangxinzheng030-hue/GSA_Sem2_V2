@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour
 {
@@ -6,15 +7,21 @@ public class PlayerInventory : MonoBehaviour
     public int slotCount = 9;
 
     [Header("References")]
-    public Transform toolHoldPoint;      // Camera 下的 ToolHoldPoint
-    public Collider playerCollider;      // Player CapsuleCollider（用于 IgnoreCollision）
+    public Transform toolHoldPoint;   // 工具（手电筒）
+    public Transform holdPoint;       // ObjectItem（普通物体）
+    public Transform throwOrigin;     // 一般拖 Camera
+    public Collider playerCollider;
+
+    [Header("Throw Settings")]
+    public float throwForce = 8f;
+    public float throwUpwardForce = 1.5f;
 
     public int SelectedIndex { get; private set; } = 0;
 
     private ToolItem[] slots;
-    private ToolItem equipped;           // 当前手上显示的工具
+    private ToolItem equipped;
 
-    public System.Action OnChanged;      // 给UI刷新用
+    public System.Action OnChanged;
 
     private void Awake()
     {
@@ -25,6 +32,7 @@ public class PlayerInventory : MonoBehaviour
     {
         // 滚轮切换
         float scroll = Input.GetAxisRaw("Mouse ScrollWheel");
+
         if (scroll > 0f)
         {
             int next = (SelectedIndex - 1 + slotCount) % slotCount;
@@ -36,37 +44,54 @@ public class PlayerInventory : MonoBehaviour
             SelectSlot(next);
         }
 
-        // G 丢弃当前选中工具
+        // G 丢弃
         if (Input.GetKeyDown(KeyCode.G))
         {
             DropSelectedTool();
         }
+
+        // 左键抛出（仅 ObjectItem）
+        if (Input.GetMouseButtonDown(0) && CanThrowSelectedObject())
+        {
+            ThrowSelectedTool();
+        }
     }
 
-    public ToolItem GetSlot(int index) => (index >= 0 && index < slotCount) ? slots[index] : null;
+    // =========================
+    // 基础功能
+    // =========================
+
+    public ToolItem GetSlot(int index)
+    {
+        return (index >= 0 && index < slotCount) ? slots[index] : null;
+    }
 
     public bool AddTool(ToolItem tool)
     {
         if (tool == null) return false;
 
         int empty = -1;
+
         for (int i = 0; i < slots.Length; i++)
         {
-            if (slots[i] == null) { empty = i; break; }
+            if (slots[i] == null)
+            {
+                empty = i;
+                break;
+            }
         }
+
         if (empty == -1) return false;
 
         slots[empty] = tool;
 
         StoreTool(tool);
 
-        // ✅ 只在“当前选中槽位就是这个空位”时，才自动装备（更像MC）
         if (equipped == null && SelectedIndex == empty)
         {
             SelectSlot(empty);
         }
 
-        Debug.Log($"AddTool: {tool.name}, data={(tool.data ? tool.data.name : "NULL")}, icon={(tool.data && tool.data.icon ? tool.data.icon.name : "NULL")}");
         OnChanged?.Invoke();
         return true;
     }
@@ -80,12 +105,14 @@ public class PlayerInventory : MonoBehaviour
         OnChanged?.Invoke();
     }
 
+    // =========================
+    // 装备逻辑（核心）
+    // =========================
+
     private void EquipFromSlot(int index)
     {
-        // 先卸下当前装备
         if (equipped != null)
         {
-            // 不丢弃，只是隐藏回“库存状态”
             StoreTool(equipped);
             equipped = null;
         }
@@ -95,51 +122,73 @@ public class PlayerInventory : MonoBehaviour
 
         equipped = tool;
 
-        tool.gameObject.SetActive(true);
-        tool.transform.SetParent(toolHoldPoint, false);
+        // 判断挂点
+        Transform targetPoint = toolHoldPoint;
 
-        // 获取或添加 LockToHoldPoint
-        var lockComp = tool.GetComponent<LockToHoldPoint>();
-        if (lockComp == null)
+        if (tool.data != null && tool.data.holdPointType == HoldPointType.HoldPoint)
         {
-            lockComp = tool.gameObject.AddComponent<LockToHoldPoint>();
+            targetPoint = holdPoint;
         }
 
-        // 启用锁定
+        if (targetPoint == null)
+        {
+            Debug.LogWarning($"{tool.name} 没有挂点，回退 toolHoldPoint");
+            targetPoint = toolHoldPoint;
+        }
+
+        tool.gameObject.SetActive(true);
+        tool.transform.SetParent(targetPoint, false);
+
+        var lockComp = tool.GetComponent<LockToHoldPoint>();
+        if (lockComp == null)
+            lockComp = tool.gameObject.AddComponent<LockToHoldPoint>();
+
         lockComp.enabled = true;
-        lockComp.holdPoint = toolHoldPoint;
-        lockComp.localPosOffset = Vector3.zero;
-        lockComp.localEulerOffset = Vector3.zero;
+        lockComp.holdPoint = targetPoint;
 
-        // 立即贴到手上
-        tool.transform.localPosition = Vector3.zero;
-        tool.transform.localRotation = Quaternion.identity;
-        //tool.transform.localScale = Vector3.one;
+        if (tool.data != null)
+        {
+            lockComp.localPosOffset = tool.data.holdLocalPosition;
+            lockComp.localEulerOffset = tool.data.holdLocalEuler;
 
-        // 手持时：不受物理影响
+            tool.transform.localPosition = tool.data.holdLocalPosition;
+            tool.transform.localRotation = Quaternion.Euler(tool.data.holdLocalEuler);
+        }
+        else
+        {
+            tool.transform.localPosition = Vector3.zero;
+            tool.transform.localRotation = Quaternion.identity;
+        }
+
         foreach (var rb in tool.Rbs)
         {
             if (rb == null) continue;
+
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             rb.useGravity = false;
             rb.isKinematic = true;
         }
 
-        // 避免与玩家碰撞（可选）
         foreach (var c in tool.Cols)
         {
             if (c == null) continue;
-            if (playerCollider != null) Physics.IgnoreCollision(c, playerCollider, true);
+
+            if (playerCollider != null)
+                Physics.IgnoreCollision(c, playerCollider, true);
         }
     }
+
+    // =========================
+    // 收纳
+    // =========================
 
     private void StoreTool(ToolItem tool)
     {
         var lockComp = tool.GetComponent<LockToHoldPoint>();
         if (lockComp != null)
         {
-            lockComp.enabled = false;   // ✅ 只禁用
+            lockComp.enabled = false;
             lockComp.holdPoint = null;
         }
 
@@ -148,6 +197,7 @@ public class PlayerInventory : MonoBehaviour
         foreach (var rb in tool.Rbs)
         {
             if (rb == null) continue;
+
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
             rb.useGravity = false;
@@ -166,6 +216,10 @@ public class PlayerInventory : MonoBehaviour
         tool.gameObject.SetActive(false);
     }
 
+    // =========================
+    // 丢弃（G）
+    // =========================
+
     public void DropSelectedTool()
     {
         ToolItem tool = slots[SelectedIndex];
@@ -173,77 +227,102 @@ public class PlayerInventory : MonoBehaviour
 
         slots[SelectedIndex] = null;
 
-        // 若它正在装备，清掉
         if (equipped == tool) equipped = null;
 
-        // ✅ 关闭锁定（不销毁）
+        DisableLock(tool);
+
+        tool.gameObject.SetActive(true);
+        tool.transform.SetParent(null, true);
+
+        RestorePhysics(tool);
+
+        OnChanged?.Invoke();
+    }
+
+    // =========================
+    // 抛出（左键）
+    // =========================
+
+    public void ThrowSelectedTool()
+    {
+        ToolItem tool = slots[SelectedIndex];
+        if (tool == null) return;
+
+        slots[SelectedIndex] = null;
+
+        if (equipped == tool) equipped = null;
+
+        DisableLock(tool);
+
+        tool.gameObject.SetActive(true);
+        tool.transform.SetParent(null, true);
+
+        RestorePhysics(tool);
+
+        Vector3 dir = (throwOrigin != null) ? throwOrigin.forward : transform.forward;
+
+        foreach (var rb in tool.Rbs)
+        {
+            if (rb == null) continue;
+
+            rb.AddForce((dir * throwForce) + (Vector3.up * throwUpwardForce), ForceMode.Impulse);
+        }
+
+        OnChanged?.Invoke();
+    }
+
+    // =========================
+    // 限制：只能抛 ObjectItem
+    // =========================
+
+    private bool CanThrowSelectedObject()
+    {
+        ToolItem tool = slots[SelectedIndex];
+        if (tool == null) return false;
+        if (tool.data == null) return false;
+
+        return tool.data.holdPointType == HoldPointType.HoldPoint;
+    }
+
+    // =========================
+    // 工具方法
+    // =========================
+
+    private void DisableLock(ToolItem tool)
+    {
         var lockComp = tool.GetComponent<LockToHoldPoint>();
         if (lockComp != null)
         {
             lockComp.enabled = false;
             lockComp.holdPoint = null;
         }
+    }
 
-        tool.gameObject.SetActive(true);
-        tool.transform.SetParent(null, true);
-
+    private void RestorePhysics(ToolItem tool)
+    {
         foreach (var c in tool.Cols)
         {
             if (c == null) continue;
+
             c.enabled = true;
-            if (playerCollider != null) Physics.IgnoreCollision(c, playerCollider, false);
+
+            if (playerCollider != null)
+                Physics.IgnoreCollision(c, playerCollider, false);
         }
 
         foreach (var rb in tool.Rbs)
         {
             if (rb == null) continue;
+
             rb.isKinematic = false;
             rb.useGravity = true;
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
-
-        OnChanged?.Invoke();
-
-        // ✅ 不要再 EquipFromSlot(SelectedIndex) —— 否则会让你觉得“扔不掉”
     }
 
-    public void SwapSlots(int a, int b)
+    internal void MoveSlot(int from, int to)
     {
-        if (a < 0 || a >= slotCount || b < 0 || b >= slotCount) return;
-        if (a == b) return;
-
-        var tmp = slots[a];
-        slots[a] = slots[b];
-        slots[b] = tmp;
-
-        // 如果当前选中槽位被交换，需要保持“手上装备”正确
-        // 简单做法：重新装备当前 SelectedIndex
-        EquipFromSlot(SelectedIndex);
-
-        OnChanged?.Invoke();
-    }
-
-    public void MoveSlot(int from, int to)
-    {
-        if (from < 0 || from >= slotCount || to < 0 || to >= slotCount) return;
-        if (from == to) return;
-
-        if (slots[to] == null)
-        {
-            slots[to] = slots[from];
-            slots[from] = null;
-        }
-        else
-        {
-            // 目标有东西就交换
-            var tmp = slots[to];
-            slots[to] = slots[from];
-            slots[from] = tmp;
-        }
-
-        EquipFromSlot(SelectedIndex);
-        OnChanged?.Invoke();
+        throw new NotImplementedException();
     }
 }
-
