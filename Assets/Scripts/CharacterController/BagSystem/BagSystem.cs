@@ -43,6 +43,7 @@ public class BagSystem : MonoBehaviour
             }
             else
             {
+                SetCursorLocked(true);
                 // 关闭背包：锁定并隐藏鼠标，恢复转向
 
             }
