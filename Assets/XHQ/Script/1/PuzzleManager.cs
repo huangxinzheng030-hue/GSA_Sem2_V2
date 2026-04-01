@@ -57,7 +57,7 @@ public class PuzzleManager : MonoBehaviour
         foreach (var ring in rings)
         {
             ring.LockRing();
-            StartCoroutine(ring.DissolveRoutine(dissolveTime));
+            StartCoroutine(ring.Dissolve(dissolveTime));
         }
         yield return new WaitForSeconds(dissolveTime);
 
