@@ -15,13 +15,16 @@ public class BGMDialogueSequence : MonoBehaviour
     public RectTransform dialoguePanel;
     public TextMeshProUGUI dialogueText;
 
+    [Header("Task UI")]
+    public GameObject taskRoot;
+
     [Header("Dialogue Content")]
     [TextArea(2, 5)]
     public string[] dialogueLines;
 
     [Header("Typing Settings")]
-    public float typingSpeed = 0.05f;
-    public float waitAfterLine = 1f;
+    public float typingSpeed = 0.08f;
+    public float waitAfterLine = 1.5f;
 
     [Header("Panel Settings")]
     public float maxTextWidth = 600f;
@@ -34,6 +37,11 @@ public class BGMDialogueSequence : MonoBehaviour
         if (dialogueRoot != null)
         {
             dialogueRoot.SetActive(false);
+        }
+
+        if (taskRoot != null)
+        {
+            taskRoot.SetActive(false);
         }
 
         StartCoroutine(PlaySequence());
@@ -66,6 +74,17 @@ public class BGMDialogueSequence : MonoBehaviour
         {
             yield return StartCoroutine(TypeLine(dialogueLines[i]));
             yield return new WaitForSeconds(waitAfterLine);
+        }
+
+        // Dialogue ends -> hide dialogue and show task UI
+        if (dialogueRoot != null)
+        {
+            dialogueRoot.SetActive(false);
+        }
+
+        if (taskRoot != null)
+        {
+            taskRoot.SetActive(true);
         }
     }
 
