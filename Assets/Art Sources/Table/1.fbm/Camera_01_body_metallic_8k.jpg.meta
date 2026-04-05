@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Art Sources/Table/1.fbm/Camera_01_body_metallic_8k.jpg.meta
 guid: aaeef1957dea69245bb6c47dc0ae0f2e
+========
+guid: 009fc4943a41bb84096fb5eceffb6431
+>>>>>>>> f25c9d0130b49c757ad8a5251acf20ae75e23be8:Assets/ZHX/Objects/Lime._3dfreehub-0000096166-1-assets-0001.png.meta
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -93,6 +97,7 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+<<<<<<<< HEAD:Assets/Art Sources/Table/1.fbm/Camera_01_body_metallic_8k.jpg.meta
   - serializedVersion: 4
     buildTarget: Android
     maxTextureSize: 2048
@@ -106,6 +111,8 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
+========
+>>>>>>>> f25c9d0130b49c757ad8a5251acf20ae75e23be8:Assets/ZHX/Objects/Lime._3dfreehub-0000096166-1-assets-0001.png.meta
   spriteSheet:
     serializedVersion: 2
     sprites: []
