@@ -1,0 +1,34 @@
+Universal Render Pipeline (URP)
+
+--------
+
+Victorian Props Pack includes Candles, Books, Paper scrolls, Pictures, Desk, Stool, Bottles, Test tubes rack and other Laboratory props. 
+
+--------
+
+This pack includes:
+
+Old Books set (https://assetstore.unity.com/packages/3d/props/furniture/old-books-set-147203)
+Entomological pictures (https://assetstore.unity.com/packages/3d/props/furniture/entomological-pictures-139873)
+Herbarium pictures (https://assetstore.unity.com/packages/3d/props/furniture/herbarium-pictures-139588)
+Candles and Candlesticks Pack (https://assetstore.unity.com/packages/3d/props/interior/candles-and-candlesticks-pack-149273)
+
+--------
+
+Number of Unique Meshes: 57
+Number of Prefabs: 85
+Number of Materials: 40
+Number of Textures: 154
+Polycount: from 2 to 9 596 tris
+Textures resolution: 4096x4096px, 2048x2048px, 1024x1024px (AlbedoTransparency, AO, Normal, MetallicSmoothness, Emission). 
+Textures format: TGA.
+UVs: channel 0: overlapping; channel 1: non-overlapping (for baking lightmaps).
+
+--------
+
+BONUS! Textures for HDRP (MaskMap, Normal, BaseColor, Emissive)
+
+--------
+
+If you have any questions, please write me on e-mail.
+My e-mail: gladkaya.3d@gmail.com
