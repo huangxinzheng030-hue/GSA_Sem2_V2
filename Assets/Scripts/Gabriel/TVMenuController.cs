@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TVMenuController : MonoBehaviour
 {
@@ -10,12 +11,18 @@ public class TVMenuController : MonoBehaviour
     public AudioClip moveClip;
     public AudioClip confirmClip;
 
+    public GameObject OptionsPanel;
+    public string GameScene;
+
     private int currentIndex = 0;
 
     private void Start()
     {
         currentIndex = 0;
         RefreshSelection();
+
+        if (OptionsPanel != null)
+            OptionsPanel.SetActive(false);
     }
 
     private void Update()
@@ -66,17 +73,31 @@ public class TVMenuController : MonoBehaviour
         {
             case 0:
                 Debug.Log("Start Game");
+                SceneManager.LoadScene(GameScene);
                 break;
 
             case 1:
                 Debug.Log("Options");
+                if (OptionsPanel != null)
+                    OptionsPanel.SetActive(true);
+                else
+                    Debug.LogWarning("OptionsPanel 没有绑定！");
                 break;
 
             case 2:
                 Debug.Log("Quit");
-                Application.Quit();
+                QuitGame();
                 break;
         }
+    }
+
+    void QuitGame()
+    {
+        Application.Quit();
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
     }
 
     void RefreshSelection()
