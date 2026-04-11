@@ -2900,7 +2900,6 @@ GameObject:
   - component: {fileID: 1657982079}
   - component: {fileID: 1657982078}
   - component: {fileID: 1657982077}
-  - component: {fileID: 1657982080}
   - component: {fileID: 1657982081}
   - component: {fileID: 1657982082}
   m_Layer: 0
@@ -2999,29 +2998,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1657982075}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &1657982080
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1657982075}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 22c567994e51d6144ac88a71457c2e0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wallMask:
-    serializedVersion: 2
-    m_Bits: 0
-  wallCheckDistance: 0.4
-  wallCheckHeightOffset: 0.2
-  detachDelay: 0.05
-  freezeOnWall: 1
-  moveToDetachThreshold: 0.2
-  wallJumpUpForce: 7.5
-  wallJumpOutForce: 5.5
-  afterJumpNoClingTime: 0.15
 --- !u!54 &1657982081
 Rigidbody:
   m_ObjectHideFlags: 0
