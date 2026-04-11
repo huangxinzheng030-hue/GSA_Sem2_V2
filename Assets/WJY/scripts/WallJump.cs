@@ -157,4 +157,4 @@ public class WallJump : MonoBehaviour
         // 同样把旋转冻结（按你的角色需求调整）
         rb.constraints = RigidbodyConstraints.FreezeRotation;
     }
-}
+}
