@@ -7457,7 +7457,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7701,7 +7701,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -13145,7 +13145,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -27643,7 +27643,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -29090,8 +29090,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 615732269}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.014138507, y: 0.73264897, z: 0.02277571, w: 0.6800786}
-  m_LocalPosition: {x: 2.4030004, y: -5.7070007, z: -1.1110001}
+  m_LocalRotation: {x: 0, y: -0.5882697, z: 0, w: 0.8086648}
+  m_LocalPosition: {x: 53.649998, y: 3.3799992, z: -5.93}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -31385,7 +31385,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 3c51606140fc62f4596c147201934e68, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+      objectReference: {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
     - target: {fileID: 919132149155446097, guid: 3c51606140fc62f4596c147201934e68, type: 3}
       propertyPath: m_Name
       value: Door frame side (2)
@@ -34515,7 +34515,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -37825,7 +37825,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -45194,7 +45194,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -49490,7 +49490,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 6136991e1c48faf41afc3b9e3f2666ed, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+      objectReference: {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
     - target: {fileID: 919132149155446097, guid: 6136991e1c48faf41afc3b9e3f2666ed, type: 3}
       propertyPath: m_Name
       value: Door frame top (4)
@@ -52242,7 +52242,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -59145,7 +59145,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -60543,7 +60543,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -63488,7 +63488,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -64346,7 +64346,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -71400,7 +71400,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -73292,7 +73292,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -93419,7 +93419,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -94617,7 +94617,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+  - {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -96680,7 +96680,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 3c51606140fc62f4596c147201934e68, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 2e3c82859bf48a84fa73a0dd90aae67d, type: 2}
+      objectReference: {fileID: 2100000, guid: dedc4b9ce2ea23b42a6a4874944deb08, type: 2}
     - target: {fileID: 919132149155446097, guid: 3c51606140fc62f4596c147201934e68, type: 3}
       propertyPath: m_Name
       value: Door frame side (3)

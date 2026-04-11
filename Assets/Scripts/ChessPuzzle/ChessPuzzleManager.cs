@@ -79,6 +79,9 @@ public class ChessPuzzleManager : MonoBehaviour
                 selectedPiece.LiftUp();
                 selectedPiece.SetSelectionEffects(true);
 
+                if (SFXPlayer.Instance != null)
+                    SFXPlayer.Instance.PlaySelect();
+
                 if (infoText != null)
                     infoText.text = "Selected: " + piece.type + ". Choose a target square.";
             }
@@ -89,14 +92,13 @@ public class ChessPuzzleManager : MonoBehaviour
     {
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
 
-        // 先检查是否点到了棋子
         if (Physics.Raycast(ray, out RaycastHit pieceHit, 100f, pieceLayer))
         {
             ChessPiece clickedPiece = pieceHit.collider.GetComponentInParent<ChessPiece>();
 
             if (clickedPiece != null)
             {
-                // 点到同一个白棋：取消选择，缓慢落下
+                // 再点同一个白棋：取消选择
                 if (clickedPiece == selectedPiece)
                 {
                     selectedPiece.SetSelectionEffects(false);
@@ -109,7 +111,7 @@ public class ChessPuzzleManager : MonoBehaviour
                     return;
                 }
 
-                // 点到另一个白棋：切换选择
+                // 点另一个白棋：切换选择
                 if (clickedPiece.color == PieceColor.White)
                 {
                     ClearCurrentSelectionImmediate();
@@ -122,6 +124,9 @@ public class ChessPuzzleManager : MonoBehaviour
                     selectedPiece.LiftUp();
                     selectedPiece.SetSelectionEffects(true);
 
+                    if (SFXPlayer.Instance != null)
+                        SFXPlayer.Instance.PlaySelect();
+
                     if (infoText != null)
                         infoText.text = "Selected: " + clickedPiece.type + ". Choose a target square.";
 
@@ -130,7 +135,6 @@ public class ChessPuzzleManager : MonoBehaviour
             }
         }
 
-        // 否则按目标格处理
         SelectTargetSquare();
     }
 
@@ -157,6 +161,9 @@ public class ChessPuzzleManager : MonoBehaviour
 
         piece.SetSelectionEffects(false);
 
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayMove();
+
         // 缓慢落到目标格
         yield return StartCoroutine(piece.SmoothSnapToSquareRoutine(targetSquare));
 
@@ -167,6 +174,9 @@ public class ChessPuzzleManager : MonoBehaviour
 
             if (infoText != null)
                 infoText.text = "Success! Checkmate in one.";
+
+            if (SFXPlayer.Instance != null)
+                SFXPlayer.Instance.PlaySuccess();
 
             if (successTargetPiece != null)
             {
@@ -184,6 +194,9 @@ public class ChessPuzzleManager : MonoBehaviour
         if (infoText != null)
             infoText.text = "Wrong move. Try again.";
 
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayWrong();
+
         if (resetOnWrongMove)
         {
             yield return StartCoroutine(
@@ -200,6 +213,9 @@ public class ChessPuzzleManager : MonoBehaviour
         yield return new WaitForSeconds(knockDownDelay);
 
         if (target == null) yield break;
+
+        if (SFXPlayer.Instance != null)
+            SFXPlayer.Instance.PlayKnockdown();
 
         Vector3 startPosition = target.transform.position;
         Quaternion startRotation = target.transform.rotation;

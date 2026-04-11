@@ -1,8 +1,5 @@
 ﻿using UnityEngine;
 
-
-using UnityEngine;
-
 [DisallowMultipleComponent]
 public class WallJump : MonoBehaviour
 {
