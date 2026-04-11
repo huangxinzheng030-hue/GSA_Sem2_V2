@@ -1,77 +1,54 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class HotbarSlotDrag : MonoBehaviour,
     IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
 {
-    [Header("Wiring")]
+    [Header("References")]
     public PlayerInventory inventory;
     public int slotIndex;
+    public Image iconImage;
 
-    [Header("UI")]
-    public Image iconImage;               // Õâ¸ö¸ñ×ÓµÄ icon Image
-    public Canvas rootCanvas;             // ÓÃÓÚÍÏ×§Ê±¸úËæÊó±ê
-
-    private RectTransform iconRect;
-    private Transform iconOriginalParent;
-    private Vector2 iconOriginalAnchoredPos;
-
-    private static int draggingFromIndex = -1;
-    private static HotbarSlotDrag draggingFromSlot = null;
-
-    private void Awake()
-    {
-        if (iconImage != null) iconRect = iconImage.rectTransform;
-    }
+    private static int dragFromIndex = -1;
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (inventory == null || iconImage == null || rootCanvas == null) return;
+        if (inventory == null || iconImage == null) return;
 
-        // ¿Õ²Û²»ÔÊĞíÍÏ×§
-        if (inventory.GetSlot(slotIndex) == null) return;
+        ToolItem tool = inventory.GetSlot(slotIndex);
+        if (tool == null) return;
 
-        draggingFromIndex = slotIndex;
-        draggingFromSlot = this;
+        dragFromIndex = slotIndex;
 
-        iconOriginalParent = iconRect.parent;
-        iconOriginalAnchoredPos = iconRect.anchoredPosition;
-
-        // ÈÃ icon ÅÜµ½ Canvas ¶¥²ã£¬±ÜÃâ±»ÕÚµ²
-        iconRect.SetParent(rootCanvas.transform, true);
-        iconImage.raycastTarget = false; // ¹Ø¼ü£ºÈÃ drop ÄÜ±»ÏÂÃæµÄ slot ½Óµ½
+        // åŸå›¾æ ‡å˜ç°
+        Color c = iconImage.color;
+        c.a = 0.3f;
+        iconImage.color = c;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (draggingFromSlot != this || iconRect == null) return;
-
-        // ¸úËæÊó±ê
-        iconRect.position = eventData.position;
+        // âŒ ä»€ä¹ˆéƒ½ä¸åšï¼ˆä¸å†è·Ÿéšé¼ æ ‡ï¼‰
     }
 
     public void OnDrop(PointerEventData eventData)
     {
         if (inventory == null) return;
-        if (draggingFromIndex < 0) return;
+        if (dragFromIndex < 0) return;
 
-        int from = draggingFromIndex;
-        int to = slotIndex;
-
-        inventory.MoveSlot(from, to);
+        inventory.SwapSlots(dragFromIndex, slotIndex);
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (draggingFromSlot != this || iconRect == null || iconImage == null) return;
+        if (iconImage != null)
+        {
+            Color c = iconImage.color;
+            c.a = 1f;
+            iconImage.color = c;
+        }
 
-        // icon ·Å»ØÔ­ slot
-        iconRect.SetParent(iconOriginalParent, true);
-        iconRect.anchoredPosition = iconOriginalAnchoredPos;
-        iconImage.raycastTarget = true;
-
-        draggingFromIndex = -1;
-        draggingFromSlot = null;
+        dragFromIndex = -1;
     }
 }

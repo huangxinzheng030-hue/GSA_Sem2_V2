@@ -51,7 +51,7 @@ public class PlayerInventory : MonoBehaviour
         }
 
         // 左键抛出（仅 ObjectItem）
-        if (Input.GetMouseButtonDown(0) && CanThrowSelectedObject())
+        if (Input.GetMouseButtonDown(1) && CanThrowSelectedObject())
         {
             ThrowSelectedTool();
         }
@@ -93,6 +93,10 @@ public class PlayerInventory : MonoBehaviour
         }
 
         OnChanged?.Invoke();
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.PlayPickup();
+        }
         return true;
     }
 
@@ -164,8 +168,8 @@ public class PlayerInventory : MonoBehaviour
         {
             if (rb == null) continue;
 
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
+            //rb.linearVelocity = Vector3.zero;
+            //rb.angularVelocity = Vector3.zero;
             rb.useGravity = false;
             rb.isKinematic = true;
         }
@@ -198,8 +202,8 @@ public class PlayerInventory : MonoBehaviour
         {
             if (rb == null) continue;
 
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
+            //rb.linearVelocity = Vector3.zero;
+            //rb.angularVelocity = Vector3.zero;
             rb.useGravity = false;
             rb.isKinematic = true;
         }
@@ -237,6 +241,10 @@ public class PlayerInventory : MonoBehaviour
         RestorePhysics(tool);
 
         OnChanged?.Invoke();
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.PlayDrop();
+        }
     }
 
     // =========================
@@ -269,6 +277,10 @@ public class PlayerInventory : MonoBehaviour
         }
 
         OnChanged?.Invoke();
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.PlayThrow();
+        }
     }
 
     // =========================
@@ -324,5 +336,17 @@ public class PlayerInventory : MonoBehaviour
     internal void MoveSlot(int from, int to)
     {
         throw new NotImplementedException();
+    }
+    public void SwapSlots(int a, int b)
+    {
+        if (a < 0 || a >= slotCount || b < 0 || b >= slotCount) return;
+        if (a == b) return;
+
+        ToolItem temp = slots[a];
+        slots[a] = slots[b];
+        slots[b] = temp;
+
+        EquipFromSlot(SelectedIndex);
+        OnChanged?.Invoke();
     }
 }
