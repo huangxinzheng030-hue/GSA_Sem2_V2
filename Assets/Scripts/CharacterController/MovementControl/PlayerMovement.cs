@@ -6,16 +6,18 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed;
-
     public float groundDrag;
-    
     public float sprintSpeed;
     public float crouchSpeed;
 
+    [Header("Jump")]
     public float jumpForce;
     public float jumpCooldown;
     public float airMultiplier;
-    bool readyToJump;
+
+    // 最大跳跃次数（包含地面跳）
+    public int maxJumps = 2;
+    private int jumpsRemaining;
 
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
@@ -23,53 +25,54 @@ public class PlayerMovement : MonoBehaviour
     public KeyCode crouchKey = KeyCode.LeftControl;
 
     [Header("Ground Check")]
-    public float playerHeight;
     public LayerMask whatIsGround;
-    bool grounded;
+    public float groundedRememberTime = 0.15f;
+    private bool grounded;
+    private float lastGroundedTime;
 
     [Header("Crouch")]
     public float crouchScale = 0.5f;
     public float crouchYOffset = 0.5f;
-    
+
     public Transform orientation;
     public Transform cameraHolder;
-    
+
     [Header("Camera")]
     public float normalCameraY = 0.6f;
     public float crouchCameraY = 0.3f;
 
-    // 新增：可配置的最大跳跃次数（包含地面跳），例如 2 表示双跳
-    [Header("Jump")]
-    public int maxJumps = 2;
-    private int jumpsRemaining;
+    [Header("Debug")]
+    public bool enableDebugLog = true;
 
-    float horizontalInput;
-    float verticalInput;
+    private float horizontalInput;
+    private float verticalInput;
 
-    Vector3 moveDirection;
-    
-    float currentSpeed;
-    bool isCrouching;
-    float normalHeight;
+    private Vector3 moveDirection;
+    private float currentSpeed;
+    private bool isCrouching;
+    private float normalHeight;
 
-    Rigidbody rb;
-    CapsuleCollider capsuleCollider;
+    private Rigidbody rb;
+    private CapsuleCollider capsuleCollider;
+
+    [Header("Wall Jump Preserve")]
+    public float wallJumpPreserveTime = 0.2f;
+    private float wallJumpPreserveUntil = 0f;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true;
-        readyToJump = true;
-        
         capsuleCollider = GetComponent<CapsuleCollider>();
-        normalHeight = capsuleCollider.height;
-        
-        // 初始化跳跃次数
+
+        rb.freezeRotation = true;
+
+        if (capsuleCollider != null)
+            normalHeight = capsuleCollider.height;
+
         jumpsRemaining = maxJumps;
-        
+
         if (cameraHolder != null)
         {
-            // 设置相机初始位置为固定的 Y 值
             Vector3 initialPos = cameraHolder.localPosition;
             initialPos.y = normalCameraY;
             cameraHolder.localPosition = initialPos;
@@ -82,44 +85,90 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        // Ground Check
-        grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
+        // 只要最近一小段时间内碰到过地面，就认为 grounded
+        grounded = Time.time - lastGroundedTime <= groundedRememberTime;
 
-        // 落地时重置可用跳跃次数
+        // 落地时重置跳跃次数
         if (grounded)
         {
             jumpsRemaining = maxJumps;
         }
 
-        MyInput();
-        SpeedControl();
-        // Handle Drag
-        if (grounded)
+        if (enableDebugLog && Input.GetKeyDown(jumpKey))
         {
-            rb.linearDamping = groundDrag;
-        }
-        else
-        {
-            rb.linearDamping = 0;
+            Debug.Log(
+                $"[GroundState] grounded={grounded} | jumpsRemaining={jumpsRemaining} | velocity={rb.linearVelocity}"
+            );
         }
 
+        MyInput();
+        SpeedControl();
+
+        // Handle Drag
+        if (grounded)
+            rb.linearDamping = groundDrag;
+        else
+            rb.linearDamping = 0;
+
+        if (enableDebugLog && Input.GetKeyDown(jumpKey))
+        {
+            Debug.Log(
+                $"[PlayerMovement:{name}] Space detected in Update | grounded={grounded} | jumpsRemaining={jumpsRemaining} | velocity={rb.linearVelocity} | ConsumeJumpThisFrame={PlayerWallReceiver.ConsumeJumpThisFrame}"
+            );
+        }
     }
+
     private void FixedUpdate()
     {
         MovePlayer();
     }
+
     private void MyInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        // Jumping - 使用 Input.GetKeyDown，允许空中二段跳（只要 jumpsRemaining>0）
-        if (Input.GetKeyDown(jumpKey) && jumpsRemaining > 0)
+        // 普通跳跃：如果墙跳已经消耗了这次空格，就不要再处理
+        if (Input.GetKeyDown(jumpKey))
         {
-            Jump();
-            jumpsRemaining--;
+            if (enableDebugLog)
+            {
+                Debug.Log(
+                    $"[PlayerMovement:{name}] MyInput Space branch entered | jumpsRemaining={jumpsRemaining} | grounded={grounded} | ConsumeJumpThisFrame={PlayerWallReceiver.ConsumeJumpThisFrame}"
+                );
+            }
+
+            if (PlayerWallReceiver.ConsumeJumpThisFrame)
+            {
+                if (enableDebugLog)
+                {
+                    Debug.Log($"[PlayerMovement:{name}] Space ignored because wall jump consumed it");
+                }
+            }
+            else if (jumpsRemaining > 0)
+            {
+                if (enableDebugLog)
+                {
+                    Debug.Log($"[PlayerMovement:{name}] NORMAL JUMP EXECUTED before decrement | jumpsRemaining={jumpsRemaining}");
+                }
+
+                Jump();
+                jumpsRemaining--;
+
+                if (enableDebugLog)
+                {
+                    Debug.Log($"[PlayerMovement:{name}] NORMAL JUMP finished | jumpsRemaining(after)={jumpsRemaining}");
+                }
+            }
+            else
+            {
+                if (enableDebugLog)
+                {
+                    Debug.Log($"[PlayerMovement:{name}] Space pressed but jumpsRemaining <= 0");
+                }
+            }
         }
-        
+
         // Crouch
         if (Input.GetKey(crouchKey))
         {
@@ -129,7 +178,7 @@ public class PlayerMovement : MonoBehaviour
         {
             UnCrouch();
         }
-        
+
         // Sprint
         if (Input.GetKey(sprintKey) && !isCrouching)
         {
@@ -144,84 +193,132 @@ public class PlayerMovement : MonoBehaviour
             currentSpeed = moveSpeed;
         }
     }
+
     private void MovePlayer()
     {
+        if (orientation == null) return;
+
         moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-        // On Ground
         if (grounded)
+        {
             rb.AddForce(moveDirection.normalized * currentSpeed * 10f, ForceMode.Force);
-        // In Air
-        else if (!grounded)
+        }
+        else
+        {
             rb.AddForce(moveDirection.normalized * currentSpeed * 10f * airMultiplier, ForceMode.Force);
+        }
     }
 
     private void SpeedControl()
     {
-         Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        if(flatVel.magnitude > currentSpeed)
+        // 墙跳后的短时间内，不限制水平速度
+        if (Time.time < wallJumpPreserveUntil)
+            return;
+
+        Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
+        if (flatVel.magnitude > currentSpeed)
         {
             Vector3 limitedVel = flatVel.normalized * currentSpeed;
             rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
         }
     }
 
-       private void Jump()
+    private void Jump()
+    {
+        if (enableDebugLog)
         {
-            // 重置垂直速度后施加瞬时力
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-            rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
-        }
-    
-        private void ResetJump()
-        {
-            readyToJump = true;
+            Debug.Log($"[PlayerMovement:{name}] Jump() called | velocity(before)={rb.linearVelocity} | jumpForce={jumpForce}");
         }
 
-        private void Crouch()
+        // 只清空Y速度，保留水平速度
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+
+        if (enableDebugLog)
         {
-            if (isCrouching) return;
-            
-            isCrouching = true;
-            
-            // 调整碰撞体高度
-            if (capsuleCollider != null)
+            Debug.Log($"[PlayerMovement:{name}] Jump() finished | velocity(after)={rb.linearVelocity}");
+        }
+    }
+
+    private void Crouch()
+    {
+        if (isCrouching) return;
+
+        isCrouching = true;
+
+        if (capsuleCollider != null)
+        {
+            capsuleCollider.height = normalHeight * crouchScale;
+        }
+
+        if (cameraHolder != null)
+        {
+            Vector3 newCameraPos = cameraHolder.localPosition;
+            newCameraPos.y = crouchCameraY;
+            cameraHolder.localPosition = newCameraPos;
+        }
+    }
+
+    private void UnCrouch()
+    {
+        if (!isCrouching) return;
+
+        isCrouching = false;
+
+        if (capsuleCollider != null)
+        {
+            capsuleCollider.height = normalHeight;
+        }
+
+        if (cameraHolder != null)
+        {
+            Vector3 newCameraPos = cameraHolder.localPosition;
+            newCameraPos.y = normalCameraY;
+            cameraHolder.localPosition = newCameraPos;
+        }
+        else
+        {
+            Debug.LogWarning("cameraHolder 为 null，无法恢复相机位置！");
+        }
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        // 只认 whatIsGround 里的层
+        if (((1 << collision.gameObject.layer) & whatIsGround) == 0)
+            return;
+
+        foreach (ContactPoint contact in collision.contacts)
+        {
+            // 接触面法线朝上，说明是地面，不是墙
+            if (contact.normal.y > 0.3f)
             {
-                capsuleCollider.height = normalHeight * crouchScale;
-            }
-            
-            // 调整相机位置为蹲伏Y值
-            if (cameraHolder != null)
-            {
-                Vector3 newCameraPos = cameraHolder.localPosition;
-                newCameraPos.y = crouchCameraY;
-                cameraHolder.localPosition = newCameraPos;
+                lastGroundedTime = Time.time;
+
+                if (enableDebugLog)
+                {
+                    Debug.Log($"[GroundCollision] touching ground object={collision.gameObject.name} | normal={contact.normal}");
+                }
+
+                return;
             }
         }
-        
-        private void UnCrouch()
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (((1 << collision.gameObject.layer) & whatIsGround) == 0)
+            return;
+
+        if (enableDebugLog)
         {
-            if (!isCrouching) return;
-            
-            isCrouching = false;
-            
-            // 恢复碰撞体高度
-            if (capsuleCollider != null)
-            {
-                capsuleCollider.height = normalHeight;
-            }
-            
-            // 恢复相机位置为原始Y值
-            if (cameraHolder != null)
-            {
-                Vector3 newCameraPos = cameraHolder.localPosition;
-                newCameraPos.y = normalCameraY;
-                cameraHolder.localPosition = newCameraPos;
-            }
-            else
-            {
-                Debug.LogWarning("cameraHolder 为 null，无法恢复相机位置！");
-            }
+            Debug.Log($"[GroundCollision] exit ground object={collision.gameObject.name}");
         }
+    }
+    public void NotifyWallJump()
+    {
+        wallJumpPreserveUntil = Time.time + wallJumpPreserveTime;
+    }
 }
-

@@ -3,13 +3,17 @@ using UnityEngine;
 public class Trap1 : MonoBehaviour
 {
     [Header("UI")]
-    public GameObject trapUI;              // 要弹出的UI面板（Panel）
-    public bool unlockCursor = true;       // 是否解锁鼠标给UI用
+    public GameObject trapUI;
+    public bool unlockCursor = true;
     public bool showCursor = true;
 
     [Header("Lock Player Control")]
-    public MonoBehaviour[] disableOnTrigger; // 把“移动脚本/视角脚本”等拖进来，触发时禁用它们
-    public bool onlyTriggerOnce = true;      // 是否只触发一次
+    public MonoBehaviour[] disableOnTrigger;
+    public bool onlyTriggerOnce = true;
+
+    [Header("Freeze Player Physics")]
+    public CharacterController playerController;
+    public Rigidbody playerRb;
 
     private bool triggered = false;
 
@@ -25,7 +29,6 @@ public class Trap1 : MonoBehaviour
 
         triggered = true;
 
-        // 1) 禁用控制脚本（锁死视角/移动）
         if (disableOnTrigger != null)
         {
             foreach (var mb in disableOnTrigger)
@@ -34,10 +37,22 @@ public class Trap1 : MonoBehaviour
             }
         }
 
-        // 2) 弹出UI
+        // 关键：立刻冻结玩家本体
+        if (playerRb != null)
+        {
+            playerRb.linearVelocity = Vector3.zero;
+            playerRb.angularVelocity = Vector3.zero;
+            playerRb.useGravity = false;
+            playerRb.isKinematic = true;
+        }
+
+        if (playerController != null)
+        {
+            playerController.enabled = false;
+        }
+
         if (trapUI != null) trapUI.SetActive(true);
 
-        // 3) 鼠标设置（让你能点UI）
         if (unlockCursor)
         {
             Cursor.lockState = CursorLockMode.None;
@@ -45,10 +60,8 @@ public class Trap1 : MonoBehaviour
         }
     }
 
-     // 如果你需要“关闭UI后恢复控制”，可以在UI按钮里调用这个方法
     public void ReleasePlayer()
     {
-        // 恢复脚本
         if (disableOnTrigger != null)
         {
             foreach (var mb in disableOnTrigger)
@@ -57,12 +70,20 @@ public class Trap1 : MonoBehaviour
             }
         }
 
-        // 关UI
+        if (playerRb != null)
+        {
+            playerRb.isKinematic = false;
+            playerRb.useGravity = true;
+        }
+
+        if (playerController != null)
+        {
+            playerController.enabled = true;
+        }
+
         if (trapUI != null) trapUI.SetActive(false);
 
-        // 重新锁鼠标回第一人称
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-
 }

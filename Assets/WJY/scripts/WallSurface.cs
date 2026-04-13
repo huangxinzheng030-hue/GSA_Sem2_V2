@@ -3,54 +3,45 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class WallSurface : MonoBehaviour
 {
-    [Header("Check")]
+    [Header("Player Check")]
     public string playerTag = "Player";
 
-    [Header("Attach")]
-    public bool freezeOnWall = true;
-    public bool detachOnMove = true;
-    public float detachDelay = 0.05f;
-    public float minVerticalSpeedToAttach = 0.5f;
+    [Header("Stick")]
+    public bool stickToWall = true;
+    public bool disableGravityOnWall = true;
+    public float stickDamping = 12f;
 
-    [Header("Wall Jump")]
-    public bool allowWallJump = true;
-    public float wallJumpUpForce = 7.5f;
-    public float wallJumpOutForce = 5.5f;
-    public float afterJumpNoClingTime = 0.15f;
-
-    [Header("Extra Direction")]
+    [Header("Jump Force")]
     public bool useLocalDirection = true;
-    public Vector3 extraJumpDirection = Vector3.zero;
 
-    [Header("Override Direction")]
-    public bool overrideJumpDirection = false;
-    public Vector3 customJumpDirection = new Vector3(0, 1, 1);
-    public float customJumpForce = 8f;
+    [Tooltip("弹射方向。比如 (0,1,1) = 向上+向前")]
+    public Vector3 jumpDirection = new Vector3(0, 1, 1);
 
-    void OnCollisionStay(Collision collision)
+    [Tooltip("弹射力度")]
+    public float jumpForce = 8f;
+
+    [Header("Reattach Delay")]
+    public float reattachDelay = 0.15f;
+
+    [Header("Debug")]
+    public bool enableDebugLog = true;
+
+    public Vector3 GetJumpForceWorld()
     {
-        if (!collision.gameObject.CompareTag(playerTag)) return;
+        Vector3 dir = jumpDirection.normalized;
+        if (useLocalDirection)
+            dir = transform.TransformDirection(dir);
 
-        PlayerWallReceiver receiver = collision.gameObject.GetComponent<PlayerWallReceiver>();
-        if (receiver == null) return;
-        if (!receiver.CanAttachToWall()) return;
-        if (receiver.rb == null) return;
+        Vector3 result = dir * jumpForce;
 
-        // 只在玩家接近静止/下落时允许吸墙，避免乱吸
-        if (receiver.rb.linearVelocity.y > minVerticalSpeedToAttach) return;
-
-        // 从接触点法线里找“墙面朝外方向”
-        foreach (ContactPoint contact in collision.contacts)
+        if (enableDebugLog)
         {
-            Vector3 normal = contact.normal;
-
-            // 排除地面/天花板，只保留近似垂直墙面
-            if (Mathf.Abs(normal.y) < 0.3f)
-            {
-                receiver.AttachToWall(this, normal);
-                return;
-            }
+            Debug.Log(
+                $"[WallSurface:{name}] GetJumpForceWorld | useLocal={useLocalDirection} | jumpDirection={jumpDirection} | normalizedDir={dir} | jumpForce={jumpForce} | resultForce={result}"
+            );
         }
+
+        return result;
     }
 
     void OnDrawGizmosSelected()
@@ -58,23 +49,15 @@ public class WallSurface : MonoBehaviour
         Gizmos.color = Color.cyan;
 
         Vector3 origin = transform.position;
-        Vector3 dir;
+        Vector3 force = GetJumpForceWorld();
 
-        if (overrideJumpDirection)
-        {
-            dir = useLocalDirection
-                ? transform.TransformDirection(customJumpDirection.normalized) * 2f
-                : customJumpDirection.normalized * 2f;
-        }
-        else
-        {
-            Vector3 extra = useLocalDirection
-                ? transform.TransformDirection(extraJumpDirection)
-                : extraJumpDirection;
+        Gizmos.DrawRay(origin, force.normalized * 2f);
 
-            dir = (Vector3.up * wallJumpUpForce + transform.forward * wallJumpOutForce + extra).normalized * 2f;
-        }
+        Vector3 tip = origin + force.normalized * 2f;
+        Vector3 right = Quaternion.LookRotation(force.normalized) * Quaternion.Euler(0, 160, 0) * Vector3.forward * 0.3f;
+        Vector3 left = Quaternion.LookRotation(force.normalized) * Quaternion.Euler(0, 200, 0) * Vector3.forward * 0.3f;
 
-        Gizmos.DrawRay(origin, dir);
+        Gizmos.DrawRay(tip, right);
+        Gizmos.DrawRay(tip, left);
     }
 }
