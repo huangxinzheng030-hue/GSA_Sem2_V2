@@ -59,6 +59,17 @@ public class PlayerMovement : MonoBehaviour
     public float wallJumpPreserveTime = 0.2f;
     private float wallJumpPreserveUntil = 0f;
 
+    [Header("Extra Gravity")]
+    public bool useExtraGravity = true;
+
+    [Tooltip("下落时额外向下加速度")]
+    public float fallGravityMultiplier = 2.5f;
+
+    [Tooltip("上升时松开跳跃键后，额外向下加速度，让跳跃不那么飘")]
+    public float lowJumpGravityMultiplier = 2f;
+
+    [Tooltip("最大下落速度，防止越掉越快")]
+    public float maxFallSpeed = 35f;
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -121,6 +132,7 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         MovePlayer();
+        ApplyExtraGravity();
     }
 
     private void MyInput()
@@ -320,5 +332,40 @@ public class PlayerMovement : MonoBehaviour
     public void NotifyWallJump()
     {
         wallJumpPreserveUntil = Time.time + wallJumpPreserveTime;
+    }
+    private void ApplyExtraGravity()
+    {
+        if (!useExtraGravity) return;
+        if (rb == null) return;
+        if (rb.isKinematic) return;
+
+        Vector3 vel = rb.linearVelocity;
+
+        // 下落时额外加重力
+        if (vel.y < 0f)
+        {
+            rb.AddForce(
+                Physics.gravity * (fallGravityMultiplier - 1f),
+                ForceMode.Acceleration
+            );
+        }
+        // 上升时，如果已经松开跳跃键，让上升更快结束
+        else if (vel.y > 0f && !Input.GetKey(jumpKey))
+        {
+            rb.AddForce(
+                Physics.gravity * (lowJumpGravityMultiplier - 1f),
+                ForceMode.Acceleration
+            );
+        }
+
+        // 限制最大下落速度
+        if (rb.linearVelocity.y < -maxFallSpeed)
+        {
+            rb.linearVelocity = new Vector3(
+                rb.linearVelocity.x,
+                -maxFallSpeed,
+                rb.linearVelocity.z
+            );
+        }
     }
 }
