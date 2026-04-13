@@ -3592,6 +3592,11 @@ Transform:
   - {fileID: 194455711}
   m_Father: {fileID: 302180538}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &462066300 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 514042409648838282, guid: 5de88a38bf7317f46b69baa9b5084562, type: 3}
+  m_PrefabInstance: {fileID: 3048327811753148139}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &463289958
 GameObject:
   m_ObjectHideFlags: 0
@@ -11257,7 +11262,7 @@ Transform:
   m_GameObject: {fileID: 1372147929}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7209759, y: -0.0000011573801, z: 0.00000073973615, w: 0.69296014}
-  m_LocalPosition: {x: 1.752, y: -0.715, z: -1.114}
+  m_LocalPosition: {x: 1.752, y: -0.036, z: -1.161}
   m_LocalScale: {x: 3.3921583, y: 1.21402, z: 0.48064315}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -11636,6 +11641,32 @@ Camera:
   m_CorrespondingSourceObject: {fileID: 8292727552736692651, guid: 5de88a38bf7317f46b69baa9b5084562, type: 3}
   m_PrefabInstance: {fileID: 3048327811753148139}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1426261357 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6074245851411820857, guid: 5de88a38bf7317f46b69baa9b5084562, type: 3}
+  m_PrefabInstance: {fileID: 3048327811753148139}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 462066300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1e7f66f21f34aa4aa402b15751ba1e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1426261362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 462066300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6baf298f1b467054e9e1878ccfcafda6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inventory: {fileID: 1426261357}
+  rotateSpeed: 180
+  exitInspectKey: 324
 --- !u!1 &1427262904
 GameObject:
   m_ObjectHideFlags: 0
@@ -13029,7 +13060,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 3f7b7377ff5fab547b60a9eaa64601c6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -18512,6 +18543,10 @@ PrefabInstance:
       propertyPath: m_RaycastTarget
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5841438228109595547, guid: 5de88a38bf7317f46b69baa9b5084562, type: 3}
+      propertyPath: throwMouseButton
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6132976058814460510, guid: 5de88a38bf7317f46b69baa9b5084562, type: 3}
       propertyPath: m_Color.a
       value: 1
@@ -18712,6 +18747,18 @@ PrefabInstance:
       propertyPath: m_RaycastTarget
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7910940680542410827, guid: 5de88a38bf7317f46b69baa9b5084562, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7910940680542410827, guid: 5de88a38bf7317f46b69baa9b5084562, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7910940680542410827, guid: 5de88a38bf7317f46b69baa9b5084562, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7931932825329086846, guid: 5de88a38bf7317f46b69baa9b5084562, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -18798,6 +18845,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2482419990430076211, guid: 5de88a38bf7317f46b69baa9b5084562, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1883641596}
+    - targetCorrespondingSourceObject: {fileID: 514042409648838282, guid: 5de88a38bf7317f46b69baa9b5084562, type: 3}
+      insertIndex: 6
+      addedObject: {fileID: 1426261362}
   m_SourcePrefab: {fileID: 100100000, guid: 5de88a38bf7317f46b69baa9b5084562, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
