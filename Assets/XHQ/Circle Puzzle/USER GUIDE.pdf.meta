@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: bec2f5b790099274ba5939cb26f7c588
+timeCreated: 1517504685
+licenseType: Store
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 110637
+  packageName: Circle Puzzle Minigame
+  packageVersion: 1.0
+  assetPath: Assets/Circle Puzzle/USER GUIDE.pdf
+  uploadId: 227635
