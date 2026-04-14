@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: af139f419833c4a4b800636db05f6537
+timeCreated: 1517477816
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 110637
+  packageName: Circle Puzzle Minigame
+  packageVersion: 1.0
+  assetPath: Assets/Circle Puzzle/Material/10001.mat
+  uploadId: 227635
