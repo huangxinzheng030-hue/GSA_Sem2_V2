@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 8e319e3f296fe3949a4f0603f5bcfc70, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 97db29285b1962d4f9a246c622f55359, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -1165,8 +1165,8 @@ MonoBehaviour:
   disableGravityOnWall: 1
   stickDamping: 12
   useLocalDirection: 1
-  jumpDirection: {x: 0, y: 1, z: 1}
-  jumpForce: 8
+  jumpDirection: {x: -2.08, y: 5.34, z: -1.63}
+  jumpForce: 70.6
   reattachDelay: 0.15
   enableDebugLog: 1
 --- !u!54 &485385681
@@ -3884,6 +3884,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bottom2
       objectReference: {fileID: 0}
+    - target: {fileID: 4018289413062423019, guid: 978498616c170624085451af98ca780a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4544189007048216496, guid: 978498616c170624085451af98ca780a, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -5641,7 +5645,7 @@ Transform:
   m_GameObject: {fileID: 2103665695}
   serializedVersion: 2
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: -2.2263, y: 5.3892, z: -119.85}
+  m_LocalPosition: {x: 2306, y: 5.3892, z: 1213}
   m_LocalScale: {x: 4.617478, y: 4.617478, z: 4.617478}
   m_ConstrainProportionsScale: 1
   m_Children: []
