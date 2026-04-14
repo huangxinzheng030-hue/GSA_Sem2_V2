@@ -3,16 +3,10 @@ using Unity.Cinemachine;
 
 public class CameraManager : MonoBehaviour
 {
-    public CinemachineCamera farCam;    // 远景
-    public CinemachineCamera closeCam;  // 近景
+    public CinemachineCamera farCam; 
+    public CinemachineCamera closeCam;
 
     void Start()
-    {
-        // 核心修改：游戏一开始就自动拉近
-        ZoomIn(); 
-    }
-
-    public void ZoomIn()
     {
         closeCam.Priority = 20;
         farCam.Priority = 10;
