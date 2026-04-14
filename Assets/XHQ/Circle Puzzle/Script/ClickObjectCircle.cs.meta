@@ -1,0 +1,20 @@
+fileFormatVersion: 2
+guid: 49ed176d0ee4aba4dbbdf7182a85ea83
+timeCreated: 1517478028
+licenseType: Store
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 110637
+  packageName: Circle Puzzle Minigame
+  packageVersion: 1.0
+  assetPath: Assets/Circle Puzzle/Script/ClickObjectCircle.cs
+  uploadId: 227635

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 5b53d411c3c55fc41819397e3efc6015
+timeCreated: 1517068397
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 110637
+  packageName: Circle Puzzle Minigame
+  packageVersion: 1.0
+  assetPath: Assets/Circle Puzzle/Animation/Point light.controller
+  uploadId: 227635
