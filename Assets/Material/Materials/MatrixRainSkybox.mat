@@ -105,7 +105,7 @@ Material:
     - _GlossyReflections: 0
     - _GlyphInset: 0.04
     - _HeadBrightness: 2.6
-    - _HorizontalWarp: 0.002
+    - _HorizontalWarp: 0
     - _Layer2Scale: 1.65
     - _Layer2Speed: 0
     - _Layer2Strength: 0.65

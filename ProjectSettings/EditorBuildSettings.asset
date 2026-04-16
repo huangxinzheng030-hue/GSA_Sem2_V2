@@ -26,7 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/WJY/LevelTest2.unity
     guid: 2477a85d07f506d48a3b0159573afb59
-  - enabled: 1
+  - enabled: 0
     path: Assets/XHQ/Scenes/1.unity
     guid: 04c2e6117cbe40a4d9d184b64222c29e
   - enabled: 1
@@ -38,6 +38,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Test.unity
     guid: 0e2e2c4f22e31a94bb2144c35590610a
+  - enabled: 1
+    path: Assets/LZX/ChessPuzzle.unity
+    guid: fa835d65a5e54bf4cbf442718afe5b60
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
