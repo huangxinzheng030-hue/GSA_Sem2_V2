@@ -39,7 +39,7 @@ EditorBuildSettings:
     path: Assets/XHQ/Scenes/1.unity
     guid: 04c2e6117cbe40a4d9d184b64222c29e
   - enabled: 1
-    path: Assets/XHQ/Scenes/2.unity
+    path: Assets/XHQ/Scenes/Quiz2.unity
     guid: 09ff886b26147ba40b0a8af636689e28
   - enabled: 1
     path: Assets/Scenes/Test.unity
