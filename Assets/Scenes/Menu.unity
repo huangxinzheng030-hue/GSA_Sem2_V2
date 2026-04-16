@@ -6829,7 +6829,7 @@ MonoBehaviour:
   moveClip: {fileID: 8300000, guid: 6a6fdd3fe3bd21b48b0936e254c06d86, type: 3}
   confirmClip: {fileID: 8300000, guid: 13d99100de8d60e4faa79bf98ad94fd1, type: 3}
   OptionsPanel: {fileID: 317353693}
-  GameScene: Louvre map
+  GameScene: Plot Introduction
 --- !u!4 &1366328110
 Transform:
   m_ObjectHideFlags: 0
