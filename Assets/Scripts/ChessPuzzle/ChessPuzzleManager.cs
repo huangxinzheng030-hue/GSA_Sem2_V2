@@ -284,8 +284,9 @@ public class ChessPuzzleManager : MonoBehaviour
     {
         yield return new WaitForSeconds(nextSceneDelay);
 
-        Debug.Log("Chess puzzle completed! Returning to museum.");
+        Debug.Log("Chess solved -> set return flag");
         PuzzleProgress.chessCompleted = true;
+        PuzzleProgress.shouldReturnToMuseumPoint = true;
 
         SceneManager.LoadScene(nextSceneName);
     }

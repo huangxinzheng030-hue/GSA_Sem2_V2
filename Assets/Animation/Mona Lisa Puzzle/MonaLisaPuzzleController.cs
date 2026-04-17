@@ -6,6 +6,7 @@ public class MonaLisaPuzzleController : MonoBehaviour
 {
     [Header("Player")]
     public Camera playerCamera;
+    public Transform playerRoot;
     public float interactDistance = 3f;
     public LayerMask interactLayer;
     public Transform interactTarget;   // 拖 Drawer
@@ -22,7 +23,7 @@ public class MonaLisaPuzzleController : MonoBehaviour
     public GameObject chessModel;
 
     [Header("Glass")]
-    public GameObject glassObject;     // 直接拖玻璃物体，不再用 Animator
+    public GameObject glassObject;   // 直接拖玻璃物体
 
     [Header("Scene")]
     public string chessSceneName = "ChessPuzzle";
@@ -47,10 +48,9 @@ public class MonaLisaPuzzleController : MonoBehaviour
                 chessModel.SetActive(false);
         }
 
-        // 玻璃状态恢复 / 处理
+        // 回来后 glass 直接消失
         if (glassObject != null)
         {
-            // 如果谜题已经完成，回来后直接消失
             if (PuzzleProgress.chessCompleted)
             {
                 glassObject.SetActive(false);
@@ -67,7 +67,6 @@ public class MonaLisaPuzzleController : MonoBehaviour
     {
         bool canInteract = CanInteractWithDrawer();
 
-        // 谜题完成后不再显示这个抽屉交互提示
         if (promptUI != null)
             promptUI.SetActive(canInteract && !PuzzleProgress.chessCompleted);
 
