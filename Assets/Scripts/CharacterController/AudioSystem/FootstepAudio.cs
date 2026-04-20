@@ -3,24 +3,36 @@ using UnityEngine;
 public class FootstepAudio : MonoBehaviour
 {
     [Header("References")]
-    public CharacterController controller;
-    public Transform playerVisual; // 没有就留空
-    public PlayerMovement playerMovement; // 如果你有自己的移动脚本可拖进来
+    public Transform playerRoot;          // 一般拖 Player 自己
+    public LayerMask groundLayers;        // 地面层
+    public float groundCheckDistance = 0.3f;
 
-    [Header("Settings")]
+    [Header("Movement Check")]
+    public float minMoveDistance = 0.01f; // 位移阈值，太小不算走路
+
+    [Header("Step Timing")]
     public float stepInterval = 0.45f;
-    public float minMoveThreshold = 0.1f;
 
+    private Vector3 lastPosition;
     private float stepTimer;
+
+    private void Start()
+    {
+        if (playerRoot == null)
+            playerRoot = transform;
+
+        lastPosition = playerRoot.position;
+    }
 
     private void Update()
     {
         bool isMoving = IsMoving();
-        bool grounded = IsGrounded();
+        bool isGrounded = IsGrounded();
 
-        if (!isMoving || !grounded)
+        if (!isMoving || !isGrounded)
         {
             stepTimer = 0f;
+            lastPosition = playerRoot.position;
             return;
         }
 
@@ -29,37 +41,26 @@ public class FootstepAudio : MonoBehaviour
         if (stepTimer >= stepInterval)
         {
             stepTimer = 0f;
-
-            if (SFXManager.Instance != null)
-            {
-                SFXManager.Instance.PlayFootstep();
-            }
+            SFXManager.Instance?.PlayFootstep();
         }
+
+        lastPosition = playerRoot.position;
     }
 
     private bool IsMoving()
     {
-        if (controller != null)
-        {
-            Vector3 horizontal = controller.velocity;
-            horizontal.y = 0f;
-            return horizontal.magnitude > minMoveThreshold;
-        }
+        Vector3 currentPos = playerRoot.position;
+        Vector3 delta = currentPos - lastPosition;
 
-        if (playerMovement != null)
-        {
-            // 如果你之后想接你自己的状态变量，可以在这里扩展
-            return true;
-        }
+        // 只判断水平移动，不算上下跳动
+        delta.y = 0f;
 
-        return false;
+        return delta.magnitude > minMoveDistance;
     }
 
     private bool IsGrounded()
     {
-        if (controller != null)
-            return controller.isGrounded;
-
-        return true;
+        Vector3 origin = playerRoot.position + Vector3.up * 0.05f;
+        return Physics.Raycast(origin, Vector3.down, groundCheckDistance, groundLayers);
     }
 }

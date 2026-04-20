@@ -92,6 +92,11 @@ public class PlayerInventory : MonoBehaviour
             SelectSlot(empty);
         }
 
+        if (tool.data != null && PaintingCodexUI.Instance != null)
+        {
+            PaintingCodexUI.Instance.UnlockPainting(tool.data.toolId);
+        }
+
         OnChanged?.Invoke();
         if (SFXManager.Instance != null)
         {

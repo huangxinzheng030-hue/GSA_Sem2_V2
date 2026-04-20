@@ -15,5 +15,5 @@ MonoBehaviour:
   toolId: "Starry Night Over the Rh\xF4ne"
   icon: {fileID: 21300000, guid: b78f3bc4c319f574d9f9d3832874f4c7, type: 3}
   holdPointType: 1
-  holdLocalPosition: {x: 0, y: 0, z: 0}
-  holdLocalEuler: {x: 0, y: 0, z: 0}
+  holdLocalPosition: {x: -1, y: 0, z: 0}
+  holdLocalEuler: {x: 0, y: 0, z: -90}

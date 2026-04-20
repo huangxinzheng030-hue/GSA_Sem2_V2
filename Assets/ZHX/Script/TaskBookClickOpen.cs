@@ -4,22 +4,17 @@ using UnityEngine.EventSystems;
 public class TaskBookClickOpen : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("UI")]
-    public GameObject taskRoot;
-    public GameObject glowObject;
+    public GameObject taskRoot;      // logo根物体
+    public GameObject glowObject;    // 鼠标移上去时显示的高亮/发光物体
 
-    [Header("Book")]
-    public GameObject bookAnchor;
+    [Header("Book Controller")]
+    public BookToggleController bookToggleController;
 
-    public void Start()
+    private void Start()
     {
         if (glowObject != null)
         {
             glowObject.SetActive(false);
-        }
-
-        if (bookAnchor != null)
-        {
-            bookAnchor.SetActive(false);
         }
     }
 
@@ -41,14 +36,12 @@ public class TaskBookClickOpen : MonoBehaviour, IPointerClickHandler, IPointerEn
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (taskRoot != null)
+        if (bookToggleController == null)
         {
-            taskRoot.SetActive(false);
+            Debug.LogWarning("TaskBookClickOpen: 没有绑定 BookToggleController。");
+            return;
         }
 
-        if (bookAnchor != null)
-        {
-            bookAnchor.SetActive(true);
-        }
+        bookToggleController.OpenFromLogo(taskRoot);
     }
 }

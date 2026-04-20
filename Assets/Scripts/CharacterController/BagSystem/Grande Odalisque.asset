@@ -15,5 +15,5 @@ MonoBehaviour:
   toolId: Grande Odalisque
   icon: {fileID: 21300000, guid: e5c7b6a59da69cb4d97b074a2067f6ec, type: 3}
   holdPointType: 1
-  holdLocalPosition: {x: 0, y: 0, z: 0}
-  holdLocalEuler: {x: 0, y: 0, z: 0}
+  holdLocalPosition: {x: 2, y: 0, z: 2}
+  holdLocalEuler: {x: 0, y: 0, z: 90}

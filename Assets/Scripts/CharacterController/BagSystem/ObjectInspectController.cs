@@ -7,6 +7,7 @@ public class ObjectInspectController : MonoBehaviour
 
     [Header("Inspect Settings")]
     public float rotateSpeed = 180f;
+    public KeyCode enterInspectKey = KeyCode.Mouse0;
     public KeyCode exitInspectKey = KeyCode.Mouse1;
 
     private bool isInspecting = false;
@@ -15,7 +16,7 @@ public class ObjectInspectController : MonoBehaviour
     private void Update()
     {
         // 左键进入观察模式（仅 HoldPoint 物体）
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetKeyDown(enterInspectKey))
         {
             if (!isInspecting)
             {
