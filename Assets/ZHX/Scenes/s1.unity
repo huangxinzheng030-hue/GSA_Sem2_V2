@@ -2646,12 +2646,7 @@ MonoBehaviour:
   fps: 24
   hideSignatureOnStart: 1
   holdAfterSignature: 2
-  delayBeforeFade: 1
-  fadeOverlay: {fileID: 52392528}
-  fadeToBlackTime: 2
-  intertitleText: {fileID: 1020760095}
-  intertitle: "Mus\xE9e d'Orsay"
-  intertitleHoldSeconds: 1
+  delayBeforeLoad: 0
   nextSceneName: S2
   threatPanel: {fileID: 1423203575}
   threatText: {fileID: 751019287}
@@ -2921,7 +2916,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -3368,7 +3364,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:

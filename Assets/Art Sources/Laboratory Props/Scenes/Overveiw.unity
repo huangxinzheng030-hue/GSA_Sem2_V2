@@ -3071,6 +3071,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_candle_12
       objectReference: {fileID: 0}
+    - target: {fileID: 6849118275598131764, guid: 3d2db223196f41349ac8e29dea104b16, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5792,6 +5796,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_candle_15
       objectReference: {fileID: 0}
+    - target: {fileID: 9018739171789082703, guid: 0d076e6cce60130448bba2f0803be9f9, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6375,6 +6383,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_candle_09
       objectReference: {fileID: 0}
+    - target: {fileID: 8118486019985693700, guid: 7162d4d3da37ba34790e3ba571212393, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6538,6 +6550,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_candle_06
       objectReference: {fileID: 0}
+    - target: {fileID: 7133475298502203342, guid: b814afabf3980804dbb8593994813323, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

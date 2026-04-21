@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1922180d4bc70f74e9c7353e3cfdb940
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 250669
+  packageName: Puzzle Circle Box
+  packageVersion: 1.0
+  assetPath: Assets/Puzzle_Circle/Demo_Scene/LightingData.asset
+  uploadId: 667593

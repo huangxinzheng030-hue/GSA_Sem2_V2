@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c33fca9d04488b7458e1d94101675e65
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 250669
+  packageName: Puzzle Circle Box
+  packageVersion: 1.0
+  assetPath: Assets/Puzzle_Circle/Materials/Puzzle_Circle_B_C.mat
+  uploadId: 667593
