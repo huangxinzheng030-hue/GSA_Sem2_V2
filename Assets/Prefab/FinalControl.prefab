@@ -970,7 +970,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 5044260590730745110}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &1503242173591094424
 GameObject:
   m_ObjectHideFlags: 0
@@ -1064,7 +1063,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 6
   iconImage: {fileID: 4001043368996717091}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &1576006036050673496
 GameObject:
   m_ObjectHideFlags: 0
@@ -1418,7 +1416,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 9053065832517123355}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &1961856908107233312
 GameObject:
   m_ObjectHideFlags: 0
@@ -1653,20 +1650,26 @@ MonoBehaviour:
   jumpForce: 6
   jumpCooldown: 0.25
   airMultiplier: 0.4
+  maxJumps: 1
   jumpKey: 32
   sprintKey: 304
   crouchKey: 306
-  playerHeight: 2
   whatIsGround:
     serializedVersion: 2
     m_Bits: 4294967295
+  groundedRememberTime: 0.15
   crouchScale: 0.5
   crouchYOffset: 0.5
   orientation: {fileID: 5416966665937969490}
   cameraHolder: {fileID: 2592503730297233076}
   normalCameraY: 0.6
   crouchCameraY: 0.3
-  maxJumps: 1
+  enableDebugLog: 1
+  wallJumpPreserveTime: 0.2
+  useExtraGravity: 1
+  fallGravityMultiplier: 2.5
+  lowJumpGravityMultiplier: 2
+  maxFallSpeed: 35
 --- !u!136 &5788500585902996672
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1946,7 +1949,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 2
   iconImage: {fileID: 6428921643868325418}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &2918464046222662187
 GameObject:
   m_ObjectHideFlags: 0
@@ -2073,7 +2075,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 2548915448285129632}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &2987609532813032088
 GameObject:
   m_ObjectHideFlags: 0
@@ -2467,7 +2468,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 6559119207542455331}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &3288890146995456150
 GameObject:
   m_ObjectHideFlags: 0
@@ -2997,7 +2997,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 5933709199926757437}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &4030567951140569004
 GameObject:
   m_ObjectHideFlags: 0
@@ -3316,7 +3315,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 874165882457231424}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &4446003052962037981
 GameObject:
   m_ObjectHideFlags: 0
@@ -3824,7 +3822,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 1
   iconImage: {fileID: 8257067944975638587}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &4613148769867630832
 GameObject:
   m_ObjectHideFlags: 0
@@ -3918,7 +3915,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 8224567867307112577}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &4720095430624156971
 GameObject:
   m_ObjectHideFlags: 0
@@ -4012,7 +4008,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 5196144643018178129}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &4725161472202975127
 GameObject:
   m_ObjectHideFlags: 0
@@ -4509,7 +4504,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 1692671903445958076}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &5300481233691707055
 GameObject:
   m_ObjectHideFlags: 0
@@ -4753,7 +4747,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 5105513804927614290}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &5783411595055279281
 GameObject:
   m_ObjectHideFlags: 0
@@ -5061,7 +5054,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 5
   iconImage: {fileID: 1354219873808356619}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &6014798611592600987
 GameObject:
   m_ObjectHideFlags: 0
@@ -5155,7 +5147,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 8
   iconImage: {fileID: 7394954874365394974}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &6095834390025340630
 GameObject:
   m_ObjectHideFlags: 0
@@ -5324,7 +5315,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 7
   iconImage: {fileID: 5444759238778982542}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &6630219008270630430
 GameObject:
   m_ObjectHideFlags: 0
@@ -5418,7 +5408,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 3
   iconImage: {fileID: 2662030368642959237}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &6670203725605819128
 GameObject:
   m_ObjectHideFlags: 0
@@ -5768,7 +5757,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 757753919946117442}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &7287370440152265765
 GameObject:
   m_ObjectHideFlags: 0
@@ -5862,7 +5850,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 8369658725275444345}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &7310375898134996840
 GameObject:
   m_ObjectHideFlags: 0
@@ -5956,7 +5943,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 5902995241769766359}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &7403368817220764183
 GameObject:
   m_ObjectHideFlags: 0
@@ -6125,7 +6111,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 607523303571410755}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &7643248571862354909
 GameObject:
   m_ObjectHideFlags: 0
@@ -6746,7 +6731,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 0
   iconImage: {fileID: 7778083639966847692}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &8390046429300625271
 GameObject:
   m_ObjectHideFlags: 0
@@ -7095,7 +7079,6 @@ MonoBehaviour:
   inventory: {fileID: 6074245851411820857}
   slotIndex: 4
   iconImage: {fileID: 4612878238029692253}
-  rootCanvas: {fileID: 7392086707830305893}
 --- !u!1 &8815878142483204221
 GameObject:
   m_ObjectHideFlags: 0

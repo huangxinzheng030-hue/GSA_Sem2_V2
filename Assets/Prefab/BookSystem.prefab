@@ -7085,7 +7085,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -11141,7 +11141,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   taskRoot: {fileID: 8073483079053804744}
   glowObject: {fileID: 4048419868724654332}
-  bookAnchor: {fileID: 4245836606355923274}
+  bookToggleController: {fileID: 0}
 --- !u!1 &9036909404156966994
 GameObject:
   m_ObjectHideFlags: 0
