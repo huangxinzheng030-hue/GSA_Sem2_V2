@@ -4668,7 +4668,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!320 &99695809
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -14457,7 +14457,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &325260027
 Transform:
   m_ObjectHideFlags: 0
@@ -26280,7 +26280,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &615732270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26424,8 +26424,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 615732269}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.5882697, z: 0, w: 0.8086648}
-  m_LocalPosition: {x: 53.649998, y: 3.3799992, z: -5.93}
+  m_LocalRotation: {x: -0.014138507, y: 0.73264897, z: 0.02277571, w: 0.6800786}
+  m_LocalPosition: {x: 2.4030004, y: -5.7070007, z: -1.1110001}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -137640,7 +137640,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: e73a58f6e2794ae7b1b7e50b7fb811b0, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2100000, guid: e73a58f6e2794ae7b1b7e50b7fb811b0, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:

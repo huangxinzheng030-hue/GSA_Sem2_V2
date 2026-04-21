@@ -1,7 +1,5 @@
 fileFormatVersion: 2
-guid: 60b1dbf8a1927f643b66785db4775f2d
-timeCreated: 1517391683
-licenseType: Store
+guid: 613d5e1a818f31948b58809c18e5c9a3
 DefaultImporter:
   externalObjects: {}
   userData: 
@@ -9,8 +7,8 @@ DefaultImporter:
   assetBundleVariant: 
 AssetOrigin:
   serializedVersion: 1
-  productId: 110637
-  packageName: Circle Puzzle Minigame
+  productId: 250669
+  packageName: Puzzle Circle Box
   packageVersion: 1.0
-  assetPath: Assets/Circle Puzzle/Scene/Demo Scene.unity
-  uploadId: 227635
+  assetPath: Assets/Puzzle_Circle/Demo_Scene.unity
+  uploadId: 667593

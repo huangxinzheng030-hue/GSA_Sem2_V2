@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 60b1dbf8a1927f643b66785db4775f2d
+timeCreated: 1517391683
+licenseType: Store
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 110637
+  packageName: Circle Puzzle Minigame
+  packageVersion: 1.0
+  assetPath: Assets/Circle Puzzle/Scene/Demo Scene.unity
+  uploadId: 227635

@@ -4994,20 +4994,26 @@ MonoBehaviour:
   jumpForce: 3
   jumpCooldown: 0.25
   airMultiplier: 0.4
+  maxJumps: 1
   jumpKey: 32
   sprintKey: 304
   crouchKey: 306
-  playerHeight: 2
   whatIsGround:
     serializedVersion: 2
     m_Bits: 4294967295
+  groundedRememberTime: 0.15
   crouchScale: 0.5
   crouchYOffset: 0.5
   orientation: {fileID: 5416966665951888675}
   cameraHolder: {fileID: 2592503730315295429}
   normalCameraY: 0.6
   crouchCameraY: 0.3
-  maxJumps: 1
+  enableDebugLog: 1
+  wallJumpPreserveTime: 0.2
+  useExtraGravity: 1
+  fallGravityMultiplier: 2.5
+  lowJumpGravityMultiplier: 2
+  maxFallSpeed: 35
 --- !u!54 &4905857005396648801
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5147,27 +5153,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 8292727552613264858}
   holdPoint: {fileID: 7910940680451947578}
-  toolHoldPoint: {fileID: 1548285319667632599}
   playerCollider: {fileID: 5788500585880737969}
+  inventory: {fileID: 0}
   interactDistance: 3
   interactLayer:
     serializedVersion: 2
     m_Bits: 4294967295
-  selectableTag: Pickup
+  holdSmoothSpeed: 25
+  keepUpright: 0
   interactKey: 101
   dropKey: 113
   throwMouseButton: 0
-  holdSmoothSpeed: 25
-  keepUpright: 0
   throwForce: 8
   throwUpForce: 1.2
-  flashlightToggleKey: 102
-  crowbarUseMouseButton: 0
-  throwToolKey: 103
-  toolThrowForce: 8
-  toolThrowUpForce: 1.2
+  selectableTag: Pickup
   highlightMaterial: {fileID: 2100000, guid: 6f1eb8dd8d85aa34493a0fdc3e137474, type: 2}
-  inventory: {fileID: 0}
 --- !u!224 &6187186883706047409
 RectTransform:
   m_ObjectHideFlags: 0

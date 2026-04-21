@@ -820,7 +820,8 @@ MonoBehaviour:
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
+  m_fontSharedMaterials:
+  - {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
@@ -7564,14 +7565,13 @@ MonoBehaviour:
   dialoguePanel: {fileID: 270786227}
   dialogueText: {fileID: 167083931}
   taskRoot: {fileID: 758517778}
-  dialogueLines:
-  - Good. Your first assignment starts now.
-  - "The target is the Mus\xE9e d\u2019Orsay."
-  - You know it.
-  - Before you head in, check your pocket.
-  - I left you something useful.
-  - Everything you need is built right into that manual.
-  - Try it.
+  inventoryLogoRoot: {fileID: 0}
+  fadeOverlay: {fileID: 0}
+  fadeDuration: 1.5
+  nextSceneName: "Mus\uFFFD\uFFFDe d'Orsay"
+  firstDialogueLines: []
+  secondDialogueLines: []
+  thirdDialogueLines: []
   typingSpeed: 0.08
   waitAfterLine: 1
   maxTextWidth: 600
