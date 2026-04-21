@@ -9,7 +9,7 @@ public class ObjectRotate : MonoBehaviour
     [Header("Target")]
     public Transform target;                  // 要旋转的物体
 
-    [Header("Pivot (Local To This Trigger Object)")]
+    [Header("Pivot (Local To Target)")]
     public Vector3 pivotLocalOffset = Vector3.zero;   // 旋转点，相对于当前空物体本地坐标
 
     [Header("Rotation")]
@@ -34,14 +34,20 @@ public class ObjectRotate : MonoBehaviour
 
     private Vector3 PivotWorldPosition
     {
-        get { return transform.TransformPoint(pivotLocalOffset); }
+        get
+        {
+            if (target == null) return transform.position;
+            return target.TransformPoint(pivotLocalOffset);
+        }
     }
 
     private Vector3 AxisWorldDirection
     {
         get
         {
-            Vector3 dir = transform.TransformDirection(rotationAxis.normalized);
+            if (target == null) return Vector3.up;
+
+            Vector3 dir = target.TransformDirection(rotationAxis.normalized);
             if (dir == Vector3.zero) dir = Vector3.up;
             return dir.normalized;
         }
