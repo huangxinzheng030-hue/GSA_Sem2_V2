@@ -4662,6 +4662,7 @@ GameObject:
   m_Component:
   - component: {fileID: 99695810}
   - component: {fileID: 99695809}
+  - component: {fileID: 99695811}
   m_Layer: 0
   m_Name: Timeline
   m_TagString: Untagged
@@ -4777,6 +4778,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &99695811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 99695808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 129ec38016d7e57488e8f1024fb336e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  director: {fileID: 99695809}
+  animationCameraRoot: {fileID: 615732269}
+  playerCameraRoot: {fileID: 514042409719170741}
+  playerControlScripts:
+  - {fileID: 1690437353536920314}
+  - {fileID: 4655697646616075619}
+  lockCursorAfterIntro: 1
+  hideCursorAfterIntro: 1
 --- !u!1 &100613860
 GameObject:
   m_ObjectHideFlags: 0
