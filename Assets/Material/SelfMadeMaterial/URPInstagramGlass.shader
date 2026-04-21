@@ -24,8 +24,8 @@ Shader "Custom/URP/InstagramGlass"
     {
         Tags
         {
-            "RenderType"="Transparent"
-            "Queue"="Transparent"
+           "RenderType"="Opaque"
+           "Queue"="Geometry"
             "RenderPipeline"="UniversalPipeline"
         }
 
@@ -34,8 +34,9 @@ Shader "Custom/URP/InstagramGlass"
             Name "ForwardUnlit"
             Tags { "LightMode"="UniversalForward" }
 
-            Blend SrcAlpha OneMinusSrcAlpha
-            ZWrite Off
+            //Blend SrcAlpha OneMinusSrcAlpha
+            //ZWrite Off
+            ZWrite On
             Cull Back
 
             HLSLPROGRAM

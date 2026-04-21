@@ -121,24 +121,27 @@ public class TrackingTrap : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag(playerTag)) return;
-
-        _playerInside = true;
-        if (!onlyMoveWhenPlayerInside) return;
-
-        // 进入就准备启动（实际启动受startDelay控制）
-        _startTimer = 0f;
+        SetPlayerInside(true);
     }
 
     void OnTriggerExit(Collider other)
     {
         if (!other.CompareTag(playerTag)) return;
+        SetPlayerInside(false);
+    }
 
-        _playerInside = false;
-        if (onlyMoveWhenPlayerInside)
+    public void SetPlayerInside(bool inside)
+    {
+        _playerInside = inside;
+
+        if (inside)
+            _startTimer = 0f;
+
+        if (!inside && onlyMoveWhenPlayerInside)
         {
-            // 立即停止（如果你想“离开后缓慢停下”，我也可以给版本）
             _active = false;
             _startTimer = 0f;
         }
     }
+
 }
