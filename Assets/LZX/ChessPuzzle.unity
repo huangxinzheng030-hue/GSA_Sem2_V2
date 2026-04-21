@@ -14633,7 +14633,7 @@ MonoBehaviour:
   knockDownDropDistance: 0.02
   disableTargetAfterKnockdown: 0
   loadNextLevelOnSuccess: 1
-  nextSceneName: FirstPersonPlay
+  nextSceneName: Louvre map
   nextSceneDelay: 2
   resetOnWrongMove: 1
   forceShowCursorOnStart: 1
