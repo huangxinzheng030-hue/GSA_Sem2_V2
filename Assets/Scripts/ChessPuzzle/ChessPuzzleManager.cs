@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class ChessPuzzleManager : MonoBehaviour
 {
@@ -25,8 +26,14 @@ public class ChessPuzzleManager : MonoBehaviour
     public float knockDownDropDistance = 0.02f;
     public bool disableTargetAfterKnockdown = false;
 
+    [Header("Level Transition")]
+    public bool loadNextLevelOnSuccess = true;
+    public string nextSceneName;
+    public float nextSceneDelay = 2f;
+
     [Header("Options")]
     public bool resetOnWrongMove = true;
+    public bool forceShowCursorOnStart = true;
 
     private ChessPiece selectedPiece;
     private BoardSquare originalSquare;
@@ -38,6 +45,12 @@ public class ChessPuzzleManager : MonoBehaviour
 
     private void Start()
     {
+        if (forceShowCursorOnStart)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+
         if (infoText != null)
             infoText.text = "White to move. Checkmate in one.";
     }
@@ -164,7 +177,7 @@ public class ChessPuzzleManager : MonoBehaviour
         if (SFXPlayer.Instance != null)
             SFXPlayer.Instance.PlayMove();
 
-        // 缓慢落到目标格
+        // 缓慢移动到目标格
         yield return StartCoroutine(piece.SmoothSnapToSquareRoutine(targetSquare));
 
         // 正确答案
@@ -187,6 +200,12 @@ public class ChessPuzzleManager : MonoBehaviour
 
             selectedPiece = null;
             isBusy = false;
+
+            if (loadNextLevelOnSuccess && !string.IsNullOrEmpty(nextSceneName))
+            {
+                yield return StartCoroutine(LoadNextSceneAfterDelay());
+            }
+
             yield break;
         }
 
@@ -259,6 +278,17 @@ public class ChessPuzzleManager : MonoBehaviour
         {
             target.gameObject.SetActive(false);
         }
+    }
+
+    private IEnumerator LoadNextSceneAfterDelay()
+    {
+        yield return new WaitForSeconds(nextSceneDelay);
+
+        Debug.Log("Chess solved -> set return flag");
+        PuzzleProgress.chessCompleted = true;
+        PuzzleProgress.shouldReturnToMuseumPoint = true;
+
+        SceneManager.LoadScene(nextSceneName);
     }
 
     private void ClearCurrentSelectionImmediate()

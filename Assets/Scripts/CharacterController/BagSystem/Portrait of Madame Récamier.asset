@@ -15,5 +15,5 @@ MonoBehaviour:
   toolId: "Portrait of Madame R\xE9camier"
   icon: {fileID: 21300000, guid: 62e1b843888edb64299b3c0e76717310, type: 3}
   holdPointType: 1
-  holdLocalPosition: {x: 0, y: 0, z: 0}
-  holdLocalEuler: {x: 0, y: 0, z: 0}
+  holdLocalPosition: {x: 2.8, y: 0, z: 2}
+  holdLocalEuler: {x: 0, y: 0, z: 90}

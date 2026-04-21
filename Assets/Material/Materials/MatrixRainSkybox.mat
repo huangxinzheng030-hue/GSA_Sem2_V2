@@ -107,7 +107,7 @@ Material:
     - _HeadBrightness: 2.6
     - _HorizontalWarp: 0
     - _Layer2Scale: 1.65
-    - _Layer2Speed: 0
+    - _Layer2Speed: 0.63
     - _Layer2Strength: 0.65
     - _Layer2TrailLength: 0.07
     - _Metallic: 0

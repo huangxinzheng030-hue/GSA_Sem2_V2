@@ -70,6 +70,10 @@ public class PlayerMovement : MonoBehaviour
 
     [Tooltip("最大下落速度，防止越掉越快")]
     public float maxFallSpeed = 35f;
+
+    public Vector2 MoveInput { get; private set; }
+    public bool IsGrounded { get; private set; }
+    public bool IsRunning { get; private set; }
     private void Start()
     {
         rb = GetComponent<Rigidbody>();

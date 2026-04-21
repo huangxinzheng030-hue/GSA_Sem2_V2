@@ -25,15 +25,15 @@ public class ChessPiece : MonoBehaviour
 
     [Header("Position")]
     public Vector3 positionOffset;
-    public float selectedLiftHeight = 0.25f;
     public bool autoCapturePositionOffset = true;
 
-    [Header("Move Animation")]
+    [Header("Lift / Move Animation")]
+    public float selectedLiftHeight = 0.25f;
     public float moveDuration = 0.25f;
 
     [Header("Hover Animation")]
-    public float hoverAmplitude = 0.03f;
-    public float hoverFrequency = 2f;
+    public float hoverAmplitude = 0.02f;
+    public float hoverFrequency = 1.8f;
 
     [Header("Selection Visuals")]
     public GameObject[] selectionVisuals;
@@ -127,15 +127,6 @@ public class ChessPiece : MonoBehaviour
         transform.rotation = worldRotation;
     }
 
-    public void SmoothRestoreState(BoardSquare square, Vector3 worldPosition, Quaternion worldRotation)
-    {
-        currentSquare = square;
-        isHovering = false;
-
-        StopMoveRoutine();
-        moveRoutine = StartCoroutine(SmoothRestoreRoutine(worldPosition, worldRotation));
-    }
-
     public IEnumerator SmoothRestoreStateRoutine(BoardSquare square, Vector3 worldPosition, Quaternion worldRotation)
     {
         currentSquare = square;
@@ -190,34 +181,12 @@ public class ChessPiece : MonoBehaviour
         moveRoutine = null;
     }
 
-    private IEnumerator SmoothRestoreRoutine(Vector3 targetPos, Quaternion targetRot)
-    {
-        Vector3 startPos = transform.position;
-        Quaternion startRot = transform.rotation;
-        float time = 0f;
-
-        while (time < moveDuration)
-        {
-            time += Time.deltaTime;
-            float t = Mathf.Clamp01(time / moveDuration);
-            float easedT = Mathf.SmoothStep(0f, 1f, t);
-
-            transform.position = Vector3.Lerp(startPos, targetPos, easedT);
-            transform.rotation = Quaternion.Slerp(startRot, targetRot, easedT);
-
-            yield return null;
-        }
-
-        transform.position = targetPos;
-        transform.rotation = targetRot;
-        moveRoutine = null;
-    }
-
     private IEnumerator LiftAndHover(Vector3 topPos)
     {
         Vector3 startPos = transform.position;
         float time = 0f;
 
+        // 先平滑升起
         while (time < moveDuration)
         {
             time += Time.deltaTime;
@@ -230,12 +199,12 @@ public class ChessPiece : MonoBehaviour
 
         transform.position = topPos;
 
+        // 再轻微上下漂浮
         float hoverTime = 0f;
         while (isHovering)
         {
             hoverTime += Time.deltaTime;
             float offsetY = Mathf.Sin(hoverTime * hoverFrequency * Mathf.PI * 2f) * hoverAmplitude;
-
             transform.position = topPos + Vector3.up * offsetY;
             yield return null;
         }

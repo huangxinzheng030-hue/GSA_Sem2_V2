@@ -3,100 +3,111 @@ using UnityEngine;
 public class BookToggleController : MonoBehaviour
 {
     [Header("Book")]
-    public GameObject bookRoot;
-    public Transform bookAnchor;
+    public GameObject bookAnchor;   // 书本根物体
     public KeyCode toggleKey = KeyCode.T;
 
-    [Header("Player Control Scripts To Disable")]
-    public MonoBehaviour[] scriptsToDisable;
-
     [Header("Cursor")]
-    public bool lockCursorWhenClosed = true;
+    public bool unlockCursorWhenOpen = true;
 
     private bool isBookOpen = false;
 
-    private Transform originalParent;
-    private Vector3 originalPosition;
-    private Quaternion originalRotation;
-    private Vector3 originalScale;
+    // 记录这次是不是从 logo 点开的
+    private bool openedFromLogo = false;
+    private GameObject currentLogoRoot;
 
-    void Start()
+    private void Start()
     {
-        if (bookRoot != null)
+        if (bookAnchor != null)
         {
-            originalParent = bookRoot.transform.parent;
-            originalPosition = bookRoot.transform.position;
-            originalRotation = bookRoot.transform.rotation;
-            originalScale = bookRoot.transform.localScale;
-
-            bookRoot.SetActive(false);
+            bookAnchor.SetActive(false);
         }
 
-        if (lockCursorWhenClosed)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
+        SetCursorState(false);
     }
 
-    void Update()
+    private void Update()
     {
         if (Input.GetKeyDown(toggleKey))
         {
             if (isBookOpen)
+            {
                 CloseBook();
+            }
             else
+            {
                 OpenBook();
+            }
         }
     }
 
+    // 普通打开（按T）
     public void OpenBook()
     {
-        if (bookRoot == null || bookAnchor == null) return;
+        if (bookAnchor == null)
+        {
+            Debug.LogWarning("BookToggleController: bookAnchor 没有绑定。");
+            return;
+        }
 
+        bookAnchor.SetActive(true);
         isBookOpen = true;
 
-        bookRoot.SetActive(true);
-        bookRoot.transform.SetParent(bookAnchor);
-        bookRoot.transform.localPosition = Vector3.zero;
-        bookRoot.transform.localRotation = Quaternion.identity;
+        SetCursorState(true);
+    }
 
-        SetPlayerControl(false);
+    // 从logo点击打开
+    public void OpenFromLogo(GameObject logoRoot)
+    {
+        currentLogoRoot = logoRoot;
+        openedFromLogo = true;
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        if (currentLogoRoot != null)
+        {
+            currentLogoRoot.SetActive(false);
+        }
+
+        OpenBook();
     }
 
     public void CloseBook()
     {
-        if (bookRoot == null) return;
+        if (bookAnchor != null)
+        {
+            bookAnchor.SetActive(false);
+        }
 
         isBookOpen = false;
 
-        bookRoot.transform.SetParent(originalParent);
-        bookRoot.transform.position = originalPosition;
-        bookRoot.transform.rotation = originalRotation;
-        bookRoot.transform.localScale = originalScale;
+        // 如果这次是从logo点开的，关闭时让logo重新出现
+        if (openedFromLogo && currentLogoRoot != null)
+        {
+            currentLogoRoot.SetActive(true);
+        }
 
-        bookRoot.SetActive(false);
+        currentLogoRoot = null;
+        openedFromLogo = false;
 
-        SetPlayerControl(true);
+        SetCursorState(false);
+    }
 
-        if (lockCursorWhenClosed)
+    private void SetCursorState(bool bookOpen)
+    {
+        if (!unlockCursorWhenOpen) return;
+
+        if (bookOpen)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
     }
 
-    private void SetPlayerControl(bool enabledState)
+    public bool IsBookOpen()
     {
-        if (scriptsToDisable == null) return;
-
-        foreach (var script in scriptsToDisable)
-        {
-            if (script != null)
-                script.enabled = enabledState;
-        }
+        return isBookOpen;
     }
 }

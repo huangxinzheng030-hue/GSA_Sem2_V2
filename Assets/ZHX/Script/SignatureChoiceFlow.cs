@@ -17,24 +17,15 @@ public class SignatureChoiceFlow : MonoBehaviour
     public float fps = 24f;
     public bool hideSignatureOnStart = true;
 
-    [Header("Timing (Sign -> Fade)")]
+    [Header("Timing (Sign -> Load Loading Scene)")]
     [Tooltip("Wait after the signature animation finishes (stay on the scene).")]
     public float holdAfterSignature = 2f;
 
-    [Tooltip("Optional extra delay before starting the fade.")]
-    public float delayBeforeFade = 0f;
-
-    [Header("Fade Overlay (Black Screen)")]
-    public CanvasGroup fadeOverlay;
-    public float fadeToBlackTime = 0.6f;
-
-    [Header("Intertitle (Black Screen Title)")]
-    public TMP_Text intertitleText;
-    [TextArea(1, 2)] public string intertitle = "Mus¨¦e d'Orsay";
-    public float intertitleHoldSeconds = 3.5f;
+    [Tooltip("Optional extra delay before loading the next scene.")]
+    public float delayBeforeLoad = 0f;
 
     [Header("Scenes")]
-    public string nextSceneName = "S2";
+    public string nextSceneName = "Loading";
 
     [Header("Decline -> Threat Flow")]
     public GameObject threatPanel;
@@ -83,21 +74,6 @@ public class SignatureChoiceFlow : MonoBehaviour
             {
                 signatureImage.enabled = true;
             }
-        }
-
-        // Fade defaults
-        if (fadeOverlay != null)
-        {
-            fadeOverlay.alpha = 0f;
-            fadeOverlay.blocksRaycasts = false;
-            fadeOverlay.interactable = false;
-            fadeOverlay.gameObject.SetActive(true);
-        }
-
-        // Intertitle defaults
-        if (intertitleText != null)
-        {
-            intertitleText.gameObject.SetActive(false);
         }
 
         // Threat defaults
@@ -175,12 +151,12 @@ public class SignatureChoiceFlow : MonoBehaviour
         if (holdAfterSignature > 0f)
             yield return new WaitForSeconds(holdAfterSignature);
 
-        // Optional delay before fade
-        if (delayBeforeFade > 0f)
-            yield return new WaitForSeconds(delayBeforeFade);
+        // Optional extra delay before loading
+        if (delayBeforeLoad > 0f)
+            yield return new WaitForSeconds(delayBeforeLoad);
 
-        // Fade + intertitle + load
-        yield return FadeHoldAndLoad(nextSceneName, intertitle, intertitleHoldSeconds);
+        // Directly load loading scene
+        SceneManager.LoadScene(nextSceneName);
     }
 
     public void OnDecline()
@@ -292,48 +268,5 @@ public class SignatureChoiceFlow : MonoBehaviour
                 writingSfxSource.clip = null;
             }
         }
-    }
-
-    IEnumerator FadeHoldAndLoad(string sceneName, string title, float holdSeconds)
-    {
-        // Fade to black
-        if (fadeOverlay != null)
-        {
-            fadeOverlay.blocksRaycasts = true;
-            fadeOverlay.interactable = false;
-
-            float from = fadeOverlay.alpha;
-            float t = 0f;
-
-            if (fadeToBlackTime <= 0f)
-            {
-                fadeOverlay.alpha = 1f;
-            }
-            else
-            {
-                while (t < fadeToBlackTime)
-                {
-                    t += Time.deltaTime;
-                    fadeOverlay.alpha = Mathf.Lerp(from, 1f, t / fadeToBlackTime);
-                    yield return null;
-                }
-                fadeOverlay.alpha = 1f;
-            }
-        }
-
-        // Intertitle on black
-        if (intertitleText != null && holdSeconds > 0f && !string.IsNullOrEmpty(title))
-        {
-            intertitleText.text = title;
-            intertitleText.gameObject.SetActive(true);
-            yield return new WaitForSeconds(holdSeconds);
-            intertitleText.gameObject.SetActive(false);
-        }
-        else if (holdSeconds > 0f)
-        {
-            yield return new WaitForSeconds(holdSeconds);
-        }
-
-        SceneManager.LoadScene(sceneName);
     }
 }
