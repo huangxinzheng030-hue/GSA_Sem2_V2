@@ -40,10 +40,10 @@ public class PickupSystem : MonoBehaviour
     void Start()
     {
         if (holdPoint == null)
-            Debug.LogWarning("PickupSystem: holdPoint 未设置");
+            Debug.LogWarning("PickupSystem: holdPoint not set");
 
         if (inventory == null)
-            Debug.LogWarning("PickupSystem: inventory 未设置");
+            Debug.LogWarning("PickupSystem: inventory not set");
     }
 
     void Update()
@@ -115,7 +115,31 @@ public class PickupSystem : MonoBehaviour
         {
             if (inventory == null)
             {
-                Debug.LogWarning("PickupSystem: ToolItem检测到但没有inventory");
+                Debug.LogWarning("PickupSystem: ToolItem detect there is no inventory");
+                return;
+            }
+
+            WorldCollectible collectible = hit.collider.GetComponentInParent<WorldCollectible>();
+
+            bool ok = inventory.AddTool(toolItem);
+
+            if (ok)
+            {
+                if (collectible != null)
+                    collectible.MarkCollected();
+
+                heldRb = null;
+                heldCollider = null;
+            }
+
+            return;
+        }
+
+        if (toolItem != null)
+        {
+            if (inventory == null)
+            {
+                Debug.LogWarning("PickupSystem: ToolItem detect there is no inventory");
                 return;
             }
 
