@@ -6,12 +6,14 @@ public class MazeFinalController : MonoBehaviour
     [Header("Assign in Inspector")]
     public GameObject mazeObject;   
     public GameObject painting;     
-    public AudioSource unlockSound; 
+    public AudioSource unlockSound;
+    public GameObject glassCover;
 
     [Header("Settings")]
     public float pauseDelay = 1.5f;   
     public float slideSpeed = 10f;   
-    public float fallDistance = 25f;  
+    public float fallDistance = 25f;
+    public float glassFadeDelay = 1f;  
 
     private bool isTriggered = false;
 
@@ -70,6 +72,10 @@ public class MazeFinalController : MonoBehaviour
         }
 
         Destroy(mazeObject);
+
+        if (glassCover != null)
+            Destroy(glassCover, glassFadeDelay);
+
         Debug.Log("Maze Sequence Completed.");
     }
 }
