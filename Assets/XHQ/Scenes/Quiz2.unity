@@ -119,18 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &160422079
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919132148484041030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 692d17506aa77dc4bb61807b78815089, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!65 &160422080
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1592,7 +1580,6 @@ GameObject:
   - component: {fileID: 3469287838153391193}
   - component: {fileID: 1711813854426024083}
   - component: {fileID: 160422080}
-  - component: {fileID: 160422079}
   m_Layer: 0
   m_Name: Victorian Painting
   m_TagString: Untagged
@@ -1993,7 +1980,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ae3d017f7cb13a3408e57db964b716a9, type: 2}
+  - {fileID: 2100000, guid: d892bb1dcbe298d4fbe8a755744ebd9e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2051,7 +2038,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0.000000035762785, y: -0.00030710766, z: -0.0000000011920929}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.0153593, y: 1.0001, z: 1.0230469}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 543450652223222780}
