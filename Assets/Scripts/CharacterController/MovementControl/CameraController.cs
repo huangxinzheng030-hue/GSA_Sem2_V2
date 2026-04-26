@@ -7,6 +7,8 @@ public class CameraController : MonoBehaviour
     public float sensX;
     public float sensY;
 
+    [Header("Refs")]
+    public Transform playerRoot;
     public Transform orientation;
 
     float xRotation;
@@ -14,20 +16,26 @@ public class CameraController : MonoBehaviour
 
     private void Start()
     {
+        if (playerRoot == null)
+        {
+            playerRoot = orientation != null ? orientation.root : transform.root;
+        }
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
-    
+
     private void Update()
     {
-        // 按下任意 Alt 键切换鼠标显示/隐藏
         if (Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt))
         {
             ToggleCursor();
         }
 
-        // 如果鼠标可见（未锁定），则不处理相机旋转
         if (Cursor.lockState != CursorLockMode.Locked)
+            return;
+
+        if (playerRoot == null || orientation == null)
             return;
 
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
@@ -38,8 +46,24 @@ public class CameraController : MonoBehaviour
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
-        orientation.rotation = Quaternion.Euler(0, yRotation, 0);
+        /*
+         * 核心修改：
+         * 不再使用 Quaternion.Euler(x, y, 0) 这种世界 Y 轴逻辑。
+         * 而是让 orientation 继承玩家当前的 up 方向。
+         */
+
+        Quaternion yawRotation = Quaternion.AngleAxis(yRotation, playerRoot.up);
+
+        Vector3 forwardOnPlane = Vector3.ProjectOnPlane(playerRoot.forward, playerRoot.up).normalized;
+        if (forwardOnPlane == Vector3.zero)
+            forwardOnPlane = Vector3.ProjectOnPlane(transform.forward, playerRoot.up).normalized;
+
+        Quaternion baseRotation = Quaternion.LookRotation(forwardOnPlane, playerRoot.up);
+
+        orientation.rotation = yawRotation * baseRotation;
+
+        transform.rotation =
+            Quaternion.AngleAxis(xRotation, orientation.right) * orientation.rotation;
     }
 
     private void ToggleCursor()
