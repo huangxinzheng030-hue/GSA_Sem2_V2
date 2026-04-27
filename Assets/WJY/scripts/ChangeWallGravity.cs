@@ -63,6 +63,8 @@ public class ChangeWallGravity : MonoBehaviour
             col.isTrigger = true;
     }
 
+    private bool autoTriggeredThisEnter = false;
+
     private void Update()
     {
         if (!playerInside) return;
@@ -71,6 +73,9 @@ public class ChangeWallGravity : MonoBehaviour
 
         if (!requireKeyPress)
         {
+            if (autoTriggeredThisEnter) return;
+
+            autoTriggeredThisEnter = true;
             StartTurn();
             return;
         }
@@ -106,6 +111,7 @@ public class ChangeWallGravity : MonoBehaviour
 
         playerInside = false;
         currentPlayerCollider = null;
+        autoTriggeredThisEnter = false;
 
         if (enableDebugLog)
         {
