@@ -1,27 +1,44 @@
+using System.Collections;
 using UnityEngine;
 
 [DisallowMultipleComponent]
 public class ObjectRotate : MonoBehaviour
 {
+    public enum RotateDirection
+    {
+        Clockwise,
+        CounterClockwise
+    }
+
     [Header("Trigger")]
     public string playerTag = "Player";
 
     [Header("Target")]
-    public Transform target;                  // 要旋转的物体
+    public Transform target;
 
     [Header("Pivot (Local To Target)")]
-    public Vector3 pivotLocalOffset = Vector3.zero;   // 旋转点，相对于当前空物体本地坐标
+    public Vector3 pivotLocalOffset = Vector3.zero;
 
     [Header("Rotation")]
-    public Vector3 rotationAxis = Vector3.up;         // 旋转轴
-    public float rotationSpeed = 90f;                // 每秒旋转角度
-    public bool rotateOnlyOnce = false;              // 是否只触发一次
-    public float maxRotateAngle = 90f;               // 最大旋转角度（只在限制角度时有用）
-    public bool limitAngle = false;                  // 是否限制最大旋转角度
+    public Vector3 rotationAxis = Vector3.up;
+    public float rotationSpeed = 90f;
+    public bool rotateOnlyOnce = false;
+    public float maxRotateAngle = 90f;
+    public bool limitAngle = false;
+
+    [Header("Rotation Direction")]
+    public RotateDirection rotateDirection = RotateDirection.Clockwise;
 
     [Header("Trigger Mode")]
-    public bool rotateWhileInside = true;            // 玩家在触发区内持续旋转
-    public bool toggleRotateOnEnter = false;         // 进入一次后切换旋转开关
+    public bool rotateWhileInside = true;
+    public bool toggleRotateOnEnter = false;
+
+    [Header("Delay Trigger")]
+    public bool useTriggerDelay = false;
+    public float triggerDelay = 1f;
+
+    [Tooltip("勾上后，只要玩家进入过 Trigger，就算之后离开，也会在延迟结束后开始旋转")]
+    public bool rotateAfterDelayEvenIfPlayerLeft = true;
 
     [Header("Debug View")]
     public float gizmoSphereSize = 0.08f;
@@ -31,6 +48,8 @@ public class ObjectRotate : MonoBehaviour
     private bool isRotating = false;
     private bool hasTriggered = false;
     private float rotatedAngle = 0f;
+
+    private Coroutine delayCoroutine;
 
     private Vector3 PivotWorldPosition
     {
@@ -49,6 +68,7 @@ public class ObjectRotate : MonoBehaviour
 
             Vector3 dir = target.TransformDirection(rotationAxis.normalized);
             if (dir == Vector3.zero) dir = Vector3.up;
+
             return dir.normalized;
         }
     }
@@ -78,6 +98,11 @@ public class ObjectRotate : MonoBehaviour
             shouldRotate = true;
         }
 
+        if (!toggleRotateOnEnter && isRotating)
+        {
+            shouldRotate = true;
+        }
+
         if (!shouldRotate) return;
 
         if (rotateOnlyOnce && hasTriggered && !limitAngle)
@@ -85,11 +110,14 @@ public class ObjectRotate : MonoBehaviour
             return;
         }
 
+        float directionSign = rotateDirection == RotateDirection.Clockwise ? 1f : -1f;
+
         float step = rotationSpeed * Time.deltaTime;
 
         if (limitAngle)
         {
             float remain = maxRotateAngle - rotatedAngle;
+
             if (remain <= 0f)
             {
                 isRotating = false;
@@ -103,6 +131,7 @@ public class ObjectRotate : MonoBehaviour
             if (rotatedAngle >= maxRotateAngle)
             {
                 hasTriggered = true;
+
                 if (rotateOnlyOnce)
                 {
                     isRotating = false;
@@ -110,7 +139,7 @@ public class ObjectRotate : MonoBehaviour
             }
         }
 
-        target.RotateAround(PivotWorldPosition, AxisWorldDirection, step);
+        target.RotateAround(PivotWorldPosition, AxisWorldDirection, step * directionSign);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -120,9 +149,18 @@ public class ObjectRotate : MonoBehaviour
 
         isPlayerInside = true;
 
-        if (toggleRotateOnEnter)
+        if (useTriggerDelay)
         {
-            isRotating = !isRotating;
+            if (delayCoroutine != null)
+            {
+                StopCoroutine(delayCoroutine);
+            }
+
+            delayCoroutine = StartCoroutine(DelayedTrigger());
+        }
+        else
+        {
+            TriggerRotate();
         }
     }
 
@@ -131,6 +169,49 @@ public class ObjectRotate : MonoBehaviour
         if (!other.CompareTag(playerTag)) return;
 
         isPlayerInside = false;
+
+        if (useTriggerDelay && !rotateAfterDelayEvenIfPlayerLeft)
+        {
+            if (delayCoroutine != null)
+            {
+                StopCoroutine(delayCoroutine);
+                delayCoroutine = null;
+            }
+        }
+
+        if (rotateWhileInside && !toggleRotateOnEnter && !useTriggerDelay)
+        {
+            isRotating = false;
+        }
+    }
+
+    private IEnumerator DelayedTrigger()
+    {
+        yield return new WaitForSeconds(triggerDelay);
+
+        if (!rotateAfterDelayEvenIfPlayerLeft && !isPlayerInside)
+        {
+            delayCoroutine = null;
+            yield break;
+        }
+
+        TriggerRotate();
+
+        delayCoroutine = null;
+    }
+
+    private void TriggerRotate()
+    {
+        if (rotateOnlyOnce && hasTriggered) return;
+
+        if (toggleRotateOnEnter)
+        {
+            isRotating = !isRotating;
+        }
+        else
+        {
+            isRotating = true;
+        }
     }
 
     private void OnDrawGizmos()
@@ -154,7 +235,6 @@ public class ObjectRotate : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawLine(pivot, pivot + axis * gizmoAxisLength);
 
-        // 从trigger中心连到旋转点，方便看偏移
         Gizmos.color = Color.green;
         Gizmos.DrawLine(transform.position, pivot);
     }

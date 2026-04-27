@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController2 : MonoBehaviour
 {
@@ -107,5 +108,10 @@ public class GameController2 : MonoBehaviour
     public void RespawnPlayer()
     {
         TeleportPlayerToRespawn();
+    }
+
+    public void RestartTheGame(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
     }
 }
