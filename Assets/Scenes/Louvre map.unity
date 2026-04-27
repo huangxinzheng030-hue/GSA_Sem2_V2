@@ -9843,14 +9843,14 @@ MonoBehaviour:
   entries:
   - toolId: Mona Lisa
     prefab: {fileID: 7366442951899204248}
-  - toolId: 
-    prefab: {fileID: 0}
-  - toolId: 
-    prefab: {fileID: 0}
-  - toolId: 
-    prefab: {fileID: 0}
-  - toolId: 
-    prefab: {fileID: 0}
+  - toolId: Grande Odalisque
+    prefab: {fileID: 5214109036085022687}
+  - toolId: "La Belle Ferronni\xE8re"
+    prefab: {fileID: 2099734907255147375}
+  - toolId: Saint John the Baptist
+    prefab: {fileID: 7653757476110159416}
+  - toolId: "Portrait of Madame R\xE9camier"
+    prefab: {fileID: 4220374864877463635}
 --- !u!114 &207482106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63079,6 +63079,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1475378084}
   m_CullTransparentMesh: 1
+--- !u!1 &1475451074
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1475451075}
+  m_Layer: 0
+  m_Name: GrandSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1475451075
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1475451074}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.36, y: -4.09, z: 2.02}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2142775339}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1478074172
 GameObject:
   m_ObjectHideFlags: 0
@@ -88654,6 +88685,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2118864462}
+  - component: {fileID: 2118864463}
   m_Layer: 0
   m_Name: GrandOdalisqueRoot
   m_TagString: Untagged
@@ -88670,12 +88702,26 @@ Transform:
   m_GameObject: {fileID: 2118864461}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -1.542, y: -1.679, z: 2.07}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2142775339}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2118864463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2118864461}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db4e33e4fe6735243b2cc8f2711c9c12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  puzzleSceneName: 
+  returnSpawnPointId: 
 --- !u!1 &2120360308
 GameObject:
   m_ObjectHideFlags: 0
@@ -89483,6 +89529,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2118864462}
+  - {fileID: 1475451075}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2143359032
@@ -138065,17 +138112,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5924536900807983040}
-  m_LocalRotation: {x: 0.19607602, y: -0, z: -0, w: 0.98058873}
-  m_LocalPosition: {x: 0, y: 0, z: 26.898506}
+  m_LocalRotation: {x: 0.1846472, y: -0, z: -0, w: 0.9828049}
+  m_LocalPosition: {x: 0, y: 0, z: 29.017}
   m_LocalScale: {x: 0.00016705247, y: 0.00016705247, z: 0.00016705247}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1424627527929997019}
   m_Father: {fileID: 1602277269}
-  m_LocalEulerAnglesHint: {x: 22.615, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 21.281, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: -12.14459, y: -1.7203008}
+  m_AnchoredPosition: {x: -12.299, y: -1.712}
   m_SizeDelta: {x: 3840, y: 2160}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!4 &3082360110658718495
@@ -142763,7 +142810,7 @@ MonoBehaviour:
   playerRoot: {fileID: 7146231222556448680}
   groundLayers:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 4294967295
   groundCheckDistance: 1.5
   minMoveDistance: 0.01
   stepInterval: 0.4
@@ -145810,7 +145857,7 @@ Transform:
   m_GameObject: {fileID: 8757709127017506435}
   serializedVersion: 2
   m_LocalRotation: {x: -0.5, y: 0.5, z: 0.5, w: 0.5}
-  m_LocalPosition: {x: 3.4962978, y: 1.05, z: 24.205}
+  m_LocalPosition: {x: 3.4962978, y: 1.288, z: 26.352}
   m_LocalScale: {x: 10, y: 10, z: 24.608715}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -156912,7 +156959,7 @@ MonoBehaviour:
   interactTarget: {fileID: 3643702646102391109}
   promptUI: {fileID: 5924536900807983040}
   promptText: {fileID: 5446589747223963207}
-  interactPrompt: Press E to Interact
+  interactPrompt: Press E to slove puzzle
   interactAnimator: {fileID: 4264821771266866605}
   openTrigger: Open
   openedStateName: OpenDrawer
@@ -163006,7 +163053,7 @@ MonoBehaviour:
   slotCount: 9
   toolHoldPoint: {fileID: 7268614893990076647}
   holdPoint: {fileID: 6779321031372144815}
-  throwOrigin: {fileID: 278200636506382570}
+  throwOrigin: {fileID: 6779321031372144815}
   playerCollider: {fileID: 6319630796095239707}
   throwForce: 8
   throwUpwardForce: 1.5
@@ -188590,7 +188637,7 @@ Transform:
   m_GameObject: {fileID: 1139207991770631592}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.035589, y: -2.5623007, z: 26.570507}
+  m_LocalPosition: {x: -12.089, y: -2.5623007, z: 28.419}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

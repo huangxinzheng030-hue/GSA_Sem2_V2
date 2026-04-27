@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameStateManager : MonoBehaviour
+public class GameStateManager : MonoBehaviour, ISceneFlowService
 {
     public static GameStateManager Instance { get; private set; }
 
@@ -192,7 +192,7 @@ public class GameStateManager : MonoBehaviour
             SetFlag("ReturningFromPuzzle", false);
             return;
         }
-
+        
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         {
@@ -204,16 +204,39 @@ public class GameStateManager : MonoBehaviour
             return;
         }
 
+        Debug.Log("GameStateManager: 强制传送到 -> " + targetPoint.spawnPointId);
+
+        StartCoroutine(ForceRestorePlayerPosition(player, targetPoint));
+    }
+    private System.Collections.IEnumerator ForceRestorePlayerPosition(GameObject player, SceneSpawnPoint targetPoint)
+    {
+        if (player == null || targetPoint == null)
+        {
+            shouldRestorePlayerPosition = false;
+            pendingReturnSceneName = "";
+            pendingSpawnPointId = "";
+            SetFlag("ReturningFromPuzzle", false);
+            yield break;
+        }
+
         CharacterController cc = player.GetComponent<CharacterController>();
         if (cc == null)
             cc = player.GetComponentInChildren<CharacterController>();
 
-        if (cc != null) cc.enabled = false;
+        // 连续多帧强制纠正位置，防止被别的出生脚本覆盖
+        for (int i = 0; i < 10; i++)
+        {
+            if (cc != null) cc.enabled = false;
 
-        player.transform.position = targetPoint.transform.position;
-        player.transform.rotation = targetPoint.transform.rotation;
+            player.transform.position = targetPoint.transform.position;
+            player.transform.rotation = targetPoint.transform.rotation;
 
-        if (cc != null) cc.enabled = true;
+            if (cc != null) cc.enabled = true;
+
+            yield return null;
+        }
+
+        Debug.Log("ForceRestorePlayerPosition 完成 -> " + targetPoint.spawnPointId);
 
         shouldRestorePlayerPosition = false;
         pendingReturnSceneName = "";
