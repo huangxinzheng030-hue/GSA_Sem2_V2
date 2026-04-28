@@ -1,4 +1,3 @@
-using System.Collections;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -10,6 +9,12 @@ public class ObjectRotate : MonoBehaviour
         CounterClockwise
     }
 
+    public enum RotateMode
+    {
+        NormalRotate,
+        Swing
+    }
+
     [Header("Trigger")]
     public string playerTag = "Player";
 
@@ -19,7 +24,10 @@ public class ObjectRotate : MonoBehaviour
     [Header("Pivot (Local To Target)")]
     public Vector3 pivotLocalOffset = Vector3.zero;
 
-    [Header("Rotation")]
+    [Header("Mode")]
+    public RotateMode rotateMode = RotateMode.NormalRotate;
+
+    [Header("Normal Rotation")]
     public Vector3 rotationAxis = Vector3.up;
     public float rotationSpeed = 90f;
     public bool rotateOnlyOnce = false;
@@ -29,16 +37,29 @@ public class ObjectRotate : MonoBehaviour
     [Header("Rotation Direction")]
     public RotateDirection rotateDirection = RotateDirection.Clockwise;
 
+    [Header("Swing Mode")]
+    [Tooltip("默认关闭。勾上后，不需要玩家进入 Trigger，游戏一开始就自动来回摆动。")]
+    public bool startSwingOnAwake = false;
+
+    [Tooltip("摆动最大角度。例如 45 表示从 -45 到 +45 来回摆。")]
+    public float swingAngle = 45f;
+
+    [Tooltip("摆动速度。数值越大，摆得越快。")]
+    public float swingSpeed = 1f;
+
+    [Tooltip("摆动中心是否使用物体当前角度。一般保持勾选。")]
+    public bool useCurrentRotationAsSwingCenter = true;
+
     [Header("Trigger Mode")]
     public bool rotateWhileInside = true;
     public bool toggleRotateOnEnter = false;
 
-    [Header("Delay Trigger")]
-    public bool useTriggerDelay = false;
-    public float triggerDelay = 1f;
+    [Header("Auto Start Normal Rotate")]
+    [Tooltip("默认关闭。勾上后，不需要玩家进入 Trigger，游戏开始时就自动单向旋转。")]
+    public bool startRotatingOnAwake = false;
 
-    [Tooltip("勾上后，只要玩家进入过 Trigger，就算之后离开，也会在延迟结束后开始旋转")]
-    public bool rotateAfterDelayEvenIfPlayerLeft = true;
+    [Tooltip("如果勾上自动开始，是否仍然保留 Trigger 触发功能。一般可以不勾。")]
+    public bool keepTriggerAfterAutoStart = false;
 
     [Header("Debug View")]
     public float gizmoSphereSize = 0.08f;
@@ -49,7 +70,9 @@ public class ObjectRotate : MonoBehaviour
     private bool hasTriggered = false;
     private float rotatedAngle = 0f;
 
-    private Coroutine delayCoroutine;
+    private Quaternion startLocalRotation;
+    private Quaternion swingCenterLocalRotation;
+    private float swingTimer = 0f;
 
     private Vector3 PivotWorldPosition
     {
@@ -82,6 +105,29 @@ public class ObjectRotate : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        if (target == null)
+        {
+            target = transform;
+        }
+
+        startLocalRotation = target.localRotation;
+        swingCenterLocalRotation = useCurrentRotationAsSwingCenter ? target.localRotation : Quaternion.identity;
+
+        if (rotateMode == RotateMode.Swing && startSwingOnAwake)
+        {
+            isRotating = true;
+            hasTriggered = true;
+        }
+
+        if (rotateMode == RotateMode.NormalRotate && startRotatingOnAwake)
+        {
+            isRotating = true;
+            hasTriggered = true;
+        }
+    }
+
     private void Update()
     {
         if (target == null) return;
@@ -105,7 +151,19 @@ public class ObjectRotate : MonoBehaviour
 
         if (!shouldRotate) return;
 
-        if (rotateOnlyOnce && hasTriggered && !limitAngle)
+        if (rotateMode == RotateMode.Swing)
+        {
+            UpdateSwing();
+        }
+        else
+        {
+            UpdateNormalRotate();
+        }
+    }
+
+    private void UpdateNormalRotate()
+    {
+        if (rotateOnlyOnce && hasTriggered && !limitAngle && !startRotatingOnAwake)
         {
             return;
         }
@@ -132,7 +190,7 @@ public class ObjectRotate : MonoBehaviour
             {
                 hasTriggered = true;
 
-                if (rotateOnlyOnce)
+                if (rotateOnlyOnce || startRotatingOnAwake)
                 {
                     isRotating = false;
                 }
@@ -142,67 +200,30 @@ public class ObjectRotate : MonoBehaviour
         target.RotateAround(PivotWorldPosition, AxisWorldDirection, step * directionSign);
     }
 
+    private void UpdateSwing()
+    {
+        swingTimer += Time.deltaTime * swingSpeed;
+
+        float angle = Mathf.Sin(swingTimer) * swingAngle;
+
+        if (rotateDirection == RotateDirection.CounterClockwise)
+        {
+            angle = -angle;
+        }
+
+        Quaternion offsetRotation = Quaternion.AngleAxis(angle, rotationAxis.normalized);
+
+        target.localRotation = swingCenterLocalRotation * offsetRotation;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
+        if ((startRotatingOnAwake || startSwingOnAwake) && !keepTriggerAfterAutoStart) return;
+
         if (!other.CompareTag(playerTag)) return;
         if (rotateOnlyOnce && hasTriggered) return;
 
         isPlayerInside = true;
-
-        if (useTriggerDelay)
-        {
-            if (delayCoroutine != null)
-            {
-                StopCoroutine(delayCoroutine);
-            }
-
-            delayCoroutine = StartCoroutine(DelayedTrigger());
-        }
-        else
-        {
-            TriggerRotate();
-        }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (!other.CompareTag(playerTag)) return;
-
-        isPlayerInside = false;
-
-        if (useTriggerDelay && !rotateAfterDelayEvenIfPlayerLeft)
-        {
-            if (delayCoroutine != null)
-            {
-                StopCoroutine(delayCoroutine);
-                delayCoroutine = null;
-            }
-        }
-
-        if (rotateWhileInside && !toggleRotateOnEnter && !useTriggerDelay)
-        {
-            isRotating = false;
-        }
-    }
-
-    private IEnumerator DelayedTrigger()
-    {
-        yield return new WaitForSeconds(triggerDelay);
-
-        if (!rotateAfterDelayEvenIfPlayerLeft && !isPlayerInside)
-        {
-            delayCoroutine = null;
-            yield break;
-        }
-
-        TriggerRotate();
-
-        delayCoroutine = null;
-    }
-
-    private void TriggerRotate()
-    {
-        if (rotateOnlyOnce && hasTriggered) return;
 
         if (toggleRotateOnEnter)
         {
@@ -211,6 +232,22 @@ public class ObjectRotate : MonoBehaviour
         else
         {
             isRotating = true;
+        }
+
+        hasTriggered = true;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if ((startRotatingOnAwake || startSwingOnAwake) && !keepTriggerAfterAutoStart) return;
+
+        if (!other.CompareTag(playerTag)) return;
+
+        isPlayerInside = false;
+
+        if (rotateWhileInside && !toggleRotateOnEnter)
+        {
+            isRotating = false;
         }
     }
 

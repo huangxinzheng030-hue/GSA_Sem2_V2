@@ -2,18 +2,27 @@ using UnityEngine;
 
 public class StarLight : MonoBehaviour
 {
-    [Header("Glow Objects")]
     public GameObject glowCore;
     public GameObject glowSoft;
 
-    [HideInInspector] public bool isLit = false;
+    [Header("Audio")]
+    public AudioSource lightAudio;
 
-    private void Awake()
+    [Header("Puzzle")]
+    public StarPuzzleManager puzzleManager;
+
+    private bool isLit = false;
+
+    private void Start()
     {
-        SetUnlit();
+        if (glowCore != null)
+            glowCore.SetActive(false);
+
+        if (glowSoft != null)
+            glowSoft.SetActive(false);
     }
 
-    public void LightUp()
+    public void TurnOn()
     {
         if (isLit) return;
 
@@ -25,21 +34,12 @@ public class StarLight : MonoBehaviour
         if (glowSoft != null)
             glowSoft.SetActive(true);
 
-        PuzzleProgressManager manager = Object.FindFirstObjectByType<PuzzleProgressManager>();
-        if (manager != null)
-        {
-            manager.OnStarLit();
-        }
-    }
+        if (lightAudio != null)
+            lightAudio.Play();
 
-    public void SetUnlit()
-    {
-        isLit = false;
+        if (puzzleManager != null)
+            puzzleManager.StarLit();
 
-        if (glowCore != null)
-            glowCore.SetActive(false);
-
-        if (glowSoft != null)
-            glowSoft.SetActive(false);
+        Debug.Log(gameObject.name + " µ„¡¡¡À");
     }
 }
