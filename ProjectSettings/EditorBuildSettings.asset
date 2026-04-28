@@ -47,6 +47,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/LZX/ChessPuzzle.unity
     guid: fa835d65a5e54bf4cbf442718afe5b60
+  - enabled: 1
+    path: Assets/ZHX/Scenes/Puzzle1Star.unity
+    guid: f0c671f8a7672104ea6de5acb55508ab
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

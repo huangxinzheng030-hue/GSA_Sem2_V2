@@ -2707,6 +2707,8 @@ GameObject:
   - component: {fileID: 1249561870}
   - component: {fileID: 1249561869}
   - component: {fileID: 1249561868}
+  - component: {fileID: 1249561871}
+  - component: {fileID: 1249561872}
   m_Layer: 0
   m_Name: StarPuzzleManager
   m_TagString: Untagged
@@ -2840,6 +2842,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1249561871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249561867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 667d75b511cd97647aeab52bc361b693, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  puzzleId: StarPuzzle
+  successFlagId: Star.glassRemoved
+--- !u!114 &1249561872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249561867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 827efe67bd6441d48870c433da2804c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1419806069
 GameObject:
   m_ObjectHideFlags: 0
