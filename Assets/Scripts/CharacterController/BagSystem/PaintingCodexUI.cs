@@ -80,7 +80,15 @@ public class PaintingCodexUI : MonoBehaviour
                 entry.button.onClick.AddListener(() => OnClickEntry(cachedId));
             }
 
-            SetEntryVisual(entry, entry.unlocked);
+            bool unlocked = entry.unlocked;
+
+            if (GameStateManager.Instance != null)
+            {
+                unlocked = GameStateManager.Instance.IsPaintingUnlocked(entry.paintingId);
+            }
+
+            entry.unlocked = unlocked;
+            SetEntryVisual(entry, unlocked);
         }
 
         if (infoPanel != null)
@@ -94,6 +102,11 @@ public class PaintingCodexUI : MonoBehaviour
 
         // 已经解锁过就不重复播
         if (entry.unlocked) return;
+
+        if (GameStateManager.Instance != null)
+        {
+            GameStateManager.Instance.UnlockPainting(paintingId);
+        }
 
         entry.unlocked = true;
         SetEntryVisual(entry, true);

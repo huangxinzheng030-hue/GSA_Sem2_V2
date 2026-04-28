@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController2 : MonoBehaviour
 {
@@ -10,6 +11,16 @@ public class GameController2 : MonoBehaviour
     [Header("Default Respawn Point")]
     public Vector3 respawnPosition;
     public Vector3 respawnEulerAngles;
+
+    [Header("Respawn Gravity Reset")]
+    [Tooltip("传送回 checkpoint 时，是否把世界重力恢复为普通向下")]
+    public bool resetGravityOnRespawn = true;
+
+    [Tooltip("普通重力大小，一般保持 9.81")]
+    public float normalGravityStrength = 9.81f;
+
+    [Tooltip("传送回 checkpoint 时，是否把玩家旋转也恢复成正常站立方向")]
+    public bool resetPlayerRotationOnRespawn = true;
 
     private CharacterController characterController;
     private Rigidbody rb;
@@ -42,6 +53,7 @@ public class GameController2 : MonoBehaviour
     public void SetPlayer(Transform newPlayer)
     {
         player = newPlayer;
+
         if (player != null)
         {
             characterController = player.GetComponent<CharacterController>();
@@ -64,7 +76,7 @@ public class GameController2 : MonoBehaviour
     {
         if (player == null)
         {
-            Debug.LogWarning("GameController: Player is not assigned.");
+            Debug.LogWarning("GameController2: Player is not assigned.");
             return;
         }
 
@@ -77,16 +89,39 @@ public class GameController2 : MonoBehaviour
         if (characterController != null)
             characterController.enabled = false;
 
+        /*
+         * 核心新增：
+         * 传送回 checkpoint 前，先把全局重力恢复成普通向下。
+         */
+        if (resetGravityOnRespawn)
+        {
+            Physics.gravity = Vector3.down * normalGravityStrength;
+        }
+
         if (rb != null)
         {
             rb.isKinematic = false;
             rb.useGravity = true;
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
+
+            if (!rb.isKinematic)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
         }
 
         player.position = respawnPosition;
-        player.eulerAngles = respawnEulerAngles;
+
+        if (resetPlayerRotationOnRespawn)
+        {
+            player.rotation = Quaternion.Euler(respawnEulerAngles);
+        }
+        else
+        {
+            player.eulerAngles = respawnEulerAngles;
+        }
+
+        Physics.SyncTransforms();
 
         if (characterController != null)
             characterController.enabled = true;
@@ -96,7 +131,7 @@ public class GameController2 : MonoBehaviour
     {
         if (targetPoint == null)
         {
-            Debug.LogWarning("GameController: targetPoint is null.");
+            Debug.LogWarning("GameController2: targetPoint is null.");
             return;
         }
 
@@ -107,5 +142,34 @@ public class GameController2 : MonoBehaviour
     public void RespawnPlayer()
     {
         TeleportPlayerToRespawn();
+    }
+
+    public void RestartTheGame(string sceneName)
+    {
+        Physics.gravity = Vector3.down * normalGravityStrength;
+        SceneManager.LoadScene(sceneName);
+    }
+
+    public void ResetGravityToNormal()
+    {
+        Physics.gravity = Vector3.down * normalGravityStrength;
+
+        if (player != null && resetPlayerRotationOnRespawn)
+        {
+            player.rotation = Quaternion.Euler(respawnEulerAngles);
+        }
+
+        if (rb != null)
+        {
+            rb.useGravity = true;
+
+            if (!rb.isKinematic)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+        }
+
+        Physics.SyncTransforms();
     }
 }

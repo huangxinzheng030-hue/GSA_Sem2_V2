@@ -15,7 +15,6 @@ public class PlayerMovement : MonoBehaviour
     public float jumpCooldown;
     public float airMultiplier;
 
-    // 最大跳跃次数（包含地面跳）
     public int maxJumps = 2;
     private int jumpsRemaining;
 
@@ -27,6 +26,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Ground Check")]
     public LayerMask whatIsGround;
     public float groundedRememberTime = 0.15f;
+    public float groundNormalDotThreshold = 0.3f;
+
     private bool grounded;
     private float lastGroundedTime;
 
@@ -62,18 +63,29 @@ public class PlayerMovement : MonoBehaviour
     [Header("Extra Gravity")]
     public bool useExtraGravity = true;
 
-    [Tooltip("下落时额外向下加速度")]
+    [Tooltip("下落时额外重力倍率")]
     public float fallGravityMultiplier = 2.5f;
 
-    [Tooltip("上升时松开跳跃键后，额外向下加速度，让跳跃不那么飘")]
+    [Tooltip("松开跳跃键后，让上升更快结束")]
     public float lowJumpGravityMultiplier = 2f;
 
-    [Tooltip("最大下落速度，防止越掉越快")]
+    [Tooltip("最大下落速度")]
     public float maxFallSpeed = 35f;
 
     public Vector2 MoveInput { get; private set; }
     public bool IsGrounded { get; private set; }
     public bool IsRunning { get; private set; }
+
+    private Vector3 CurrentUp
+    {
+        get { return transform.up; }
+    }
+
+    private Vector3 CurrentDown
+    {
+        get { return -transform.up; }
+    }
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -94,16 +106,15 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("cameraHolder 未被设置！请在 Inspector 中拖拽相机对象。");
+            Debug.LogWarning("cameraHolder 没有设置，请在 Inspector 中拖入相机对象。");
         }
     }
 
     private void Update()
     {
-        // 只要最近一小段时间内碰到过地面，就认为 grounded
         grounded = Time.time - lastGroundedTime <= groundedRememberTime;
+        IsGrounded = grounded;
 
-        // 落地时重置跳跃次数
         if (grounded)
         {
             jumpsRemaining = maxJumps;
@@ -119,7 +130,6 @@ public class PlayerMovement : MonoBehaviour
         MyInput();
         SpeedControl();
 
-        // Handle Drag
         if (grounded)
             rb.linearDamping = groundDrag;
         else
@@ -144,7 +154,8 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        // 普通跳跃：如果墙跳已经消耗了这次空格，就不要再处理
+        MoveInput = new Vector2(horizontalInput, verticalInput);
+
         if (Input.GetKeyDown(jumpKey))
         {
             if (enableDebugLog)
@@ -163,11 +174,6 @@ public class PlayerMovement : MonoBehaviour
             }
             else if (jumpsRemaining > 0)
             {
-                if (enableDebugLog)
-                {
-                    Debug.Log($"[PlayerMovement:{name}] NORMAL JUMP EXECUTED before decrement | jumpsRemaining={jumpsRemaining}");
-                }
-
                 Jump();
                 jumpsRemaining--;
 
@@ -185,7 +191,6 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // Crouch
         if (Input.GetKey(crouchKey))
         {
             Crouch();
@@ -195,18 +200,20 @@ public class PlayerMovement : MonoBehaviour
             UnCrouch();
         }
 
-        // Sprint
         if (Input.GetKey(sprintKey) && !isCrouching)
         {
             currentSpeed = sprintSpeed;
+            IsRunning = true;
         }
         else if (isCrouching)
         {
             currentSpeed = crouchSpeed;
+            IsRunning = false;
         }
         else
         {
             currentSpeed = moveSpeed;
+            IsRunning = false;
         }
     }
 
@@ -214,30 +221,38 @@ public class PlayerMovement : MonoBehaviour
     {
         if (orientation == null) return;
 
-        moveDirection = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        Vector3 forwardOnPlane = Vector3.ProjectOnPlane(orientation.forward, CurrentUp).normalized;
+        Vector3 rightOnPlane = Vector3.ProjectOnPlane(orientation.right, CurrentUp).normalized;
+
+        moveDirection = forwardOnPlane * verticalInput + rightOnPlane * horizontalInput;
+
+        if (moveDirection.sqrMagnitude > 1f)
+            moveDirection.Normalize();
 
         if (grounded)
         {
-            rb.AddForce(moveDirection.normalized * currentSpeed * 10f, ForceMode.Force);
+            rb.AddForce(moveDirection * currentSpeed * 10f, ForceMode.Force);
         }
         else
         {
-            rb.AddForce(moveDirection.normalized * currentSpeed * 10f * airMultiplier, ForceMode.Force);
+            rb.AddForce(moveDirection * currentSpeed * 10f * airMultiplier, ForceMode.Force);
         }
     }
 
     private void SpeedControl()
     {
-        // 墙跳后的短时间内，不限制水平速度
         if (Time.time < wallJumpPreserveUntil)
             return;
 
-        Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+        Vector3 velocity = rb.linearVelocity;
 
-        if (flatVel.magnitude > currentSpeed)
+        Vector3 verticalVel = Vector3.Project(velocity, CurrentUp);
+        Vector3 horizontalVel = velocity - verticalVel;
+
+        if (horizontalVel.magnitude > currentSpeed)
         {
-            Vector3 limitedVel = flatVel.normalized * currentSpeed;
-            rb.linearVelocity = new Vector3(limitedVel.x, rb.linearVelocity.y, limitedVel.z);
+            Vector3 limitedHorizontalVel = horizontalVel.normalized * currentSpeed;
+            rb.linearVelocity = limitedHorizontalVel + verticalVel;
         }
     }
 
@@ -248,9 +263,13 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log($"[PlayerMovement:{name}] Jump() called | velocity(before)={rb.linearVelocity} | jumpForce={jumpForce}");
         }
 
-        // 只清空Y速度，保留水平速度
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        Vector3 velocity = rb.linearVelocity;
+
+        Vector3 verticalVel = Vector3.Project(velocity, CurrentUp);
+        Vector3 horizontalVel = velocity - verticalVel;
+
+        rb.linearVelocity = horizontalVel;
+        rb.AddForce(CurrentUp * jumpForce, ForceMode.Impulse);
 
         if (enableDebugLog)
         {
@@ -296,26 +315,26 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("cameraHolder 为 null，无法恢复相机位置！");
+            Debug.LogWarning("cameraHolder 为 null，无法恢复相机位置。");
         }
     }
 
     private void OnCollisionStay(Collision collision)
     {
-        // 只认 whatIsGround 里的层
         if (((1 << collision.gameObject.layer) & whatIsGround) == 0)
             return;
 
         foreach (ContactPoint contact in collision.contacts)
         {
-            // 接触面法线朝上，说明是地面，不是墙
-            if (contact.normal.y > 0.3f)
+            float dot = Vector3.Dot(contact.normal, CurrentUp);
+
+            if (dot > groundNormalDotThreshold)
             {
                 lastGroundedTime = Time.time;
 
                 if (enableDebugLog)
                 {
-                    Debug.Log($"[GroundCollision] touching ground object={collision.gameObject.name} | normal={contact.normal}");
+                    Debug.Log($"[GroundCollision] touching ground object={collision.gameObject.name} | normal={contact.normal} | dot={dot}");
                 }
 
                 return;
@@ -333,28 +352,30 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log($"[GroundCollision] exit ground object={collision.gameObject.name}");
         }
     }
+
     public void NotifyWallJump()
     {
         wallJumpPreserveUntil = Time.time + wallJumpPreserveTime;
     }
+
     private void ApplyExtraGravity()
     {
         if (!useExtraGravity) return;
         if (rb == null) return;
         if (rb.isKinematic) return;
 
-        Vector3 vel = rb.linearVelocity;
+        Vector3 velocity = rb.linearVelocity;
 
-        // 下落时额外加重力
-        if (vel.y < 0f)
+        float verticalSpeed = Vector3.Dot(velocity, CurrentUp);
+
+        if (verticalSpeed < 0f)
         {
             rb.AddForce(
                 Physics.gravity * (fallGravityMultiplier - 1f),
                 ForceMode.Acceleration
             );
         }
-        // 上升时，如果已经松开跳跃键，让上升更快结束
-        else if (vel.y > 0f && !Input.GetKey(jumpKey))
+        else if (verticalSpeed > 0f && !Input.GetKey(jumpKey))
         {
             rb.AddForce(
                 Physics.gravity * (lowJumpGravityMultiplier - 1f),
@@ -362,14 +383,14 @@ public class PlayerMovement : MonoBehaviour
             );
         }
 
-        // 限制最大下落速度
-        if (rb.linearVelocity.y < -maxFallSpeed)
+        float fallSpeed = Vector3.Dot(rb.linearVelocity, CurrentDown);
+
+        if (fallSpeed > maxFallSpeed)
         {
-            rb.linearVelocity = new Vector3(
-                rb.linearVelocity.x,
-                -maxFallSpeed,
-                rb.linearVelocity.z
-            );
+            Vector3 verticalVel = Vector3.Project(rb.linearVelocity, CurrentDown);
+            Vector3 horizontalVel = rb.linearVelocity - verticalVel;
+
+            rb.linearVelocity = horizontalVel + CurrentDown * maxFallSpeed;
         }
     }
 }

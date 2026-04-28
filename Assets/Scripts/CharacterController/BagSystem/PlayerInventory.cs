@@ -23,6 +23,12 @@ public class PlayerInventory : MonoBehaviour
 
     public System.Action OnChanged;
 
+    private bool restoredFromState = false;
+
+    private void Start()
+    {
+        RestoreFromGameState();
+    }
     private void Awake()
     {
         slots = new ToolItem[slotCount];
@@ -60,7 +66,64 @@ public class PlayerInventory : MonoBehaviour
     // =========================
     // 基础功能
     // =========================
+    private void SaveToGameState()
+    {
+        if (GameStateManager.Instance == null) return;
 
+        string[] ids = new string[slotCount];
+
+        for (int i = 0; i < slotCount; i++)
+        {
+            ids[i] = (slots[i] != null && slots[i].data != null)
+                ? slots[i].data.toolId
+                : "";
+        }
+
+        GameStateManager.Instance.SaveInventory(ids, SelectedIndex);
+    }
+
+    public void RestoreFromGameState()
+    {
+        if (restoredFromState) return;
+        restoredFromState = true;
+
+        if (GameStateManager.Instance == null || ToolRegistry.Instance == null) return;
+
+        var saved = GameStateManager.Instance.GetInventoryState();
+        if (saved == null || saved.slotToolIds == null || saved.slotToolIds.Length == 0) return;
+
+        // 清空现有槽位
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i] != null)
+                Destroy(slots[i].gameObject);
+
+            slots[i] = null;
+        }
+
+        equipped = null;
+
+        int restoreCount = Mathf.Min(slotCount, saved.slotToolIds.Length);
+
+        for (int i = 0; i < restoreCount; i++)
+        {
+            string toolId = saved.slotToolIds[i];
+            if (string.IsNullOrWhiteSpace(toolId)) continue;
+
+            ToolItem tool = ToolRegistry.Instance.SpawnById(toolId);
+            if (tool == null) continue;
+
+            slots[i] = tool;
+            StoreTool(tool);
+
+            if (GameStateManager.Instance != null)
+                GameStateManager.Instance.UnlockPainting(toolId);
+        }
+
+        SelectedIndex = Mathf.Clamp(saved.selectedIndex, 0, slotCount - 1);
+        EquipFromSlot(SelectedIndex);
+        OnChanged?.Invoke();
+    }
     public ToolItem GetSlot(int index)
     {
         return (index >= 0 && index < slotCount) ? slots[index] : null;
@@ -92,10 +155,16 @@ public class PlayerInventory : MonoBehaviour
             SelectSlot(empty);
         }
 
-        if (tool.data != null && PaintingCodexUI.Instance != null)
+        if (tool.data != null)
         {
-            PaintingCodexUI.Instance.UnlockPainting(tool.data.toolId);
+            if (GameStateManager.Instance != null)
+                GameStateManager.Instance.UnlockPainting(tool.data.toolId);
+
+            if (PaintingCodexUI.Instance != null)
+                PaintingCodexUI.Instance.UnlockPainting(tool.data.toolId);
         }
+
+        SaveToGameState();
 
         OnChanged?.Invoke();
         if (SFXManager.Instance != null)
@@ -112,6 +181,7 @@ public class PlayerInventory : MonoBehaviour
         SelectedIndex = index;
         EquipFromSlot(index);
         OnChanged?.Invoke();
+        SaveToGameState();
     }
 
     // =========================
@@ -245,6 +315,8 @@ public class PlayerInventory : MonoBehaviour
 
         RestorePhysics(tool);
 
+        SaveToGameState();
+
         OnChanged?.Invoke();
         if (SFXManager.Instance != null)
         {
@@ -280,6 +352,8 @@ public class PlayerInventory : MonoBehaviour
 
             rb.AddForce((dir * throwForce) + (Vector3.up * throwUpwardForce), ForceMode.Impulse);
         }
+
+        SaveToGameState();
 
         OnChanged?.Invoke();
         if (SFXManager.Instance != null)
@@ -352,6 +426,7 @@ public class PlayerInventory : MonoBehaviour
         slots[b] = temp;
 
         EquipFromSlot(SelectedIndex);
+        SaveToGameState();
         OnChanged?.Invoke();
     }
 }

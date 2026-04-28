@@ -35,6 +35,10 @@ public class ChessPuzzleManager : MonoBehaviour
     public bool resetOnWrongMove = true;
     public bool forceShowCursorOnStart = true;
 
+    [Header("Persistent IDs")]
+    public string puzzleId = "MonaLisaChess";
+    public string successFlagId = "MonaLisa.glassRemoved";
+
     private ChessPiece selectedPiece;
     private BoardSquare originalSquare;
     private Vector3 originalWorldPosition;
@@ -284,11 +288,21 @@ public class ChessPuzzleManager : MonoBehaviour
     {
         yield return new WaitForSeconds(nextSceneDelay);
 
-        Debug.Log("Chess solved -> set return flag");
-        PuzzleProgress.chessCompleted = true;
-        PuzzleProgress.shouldReturnToMuseumPoint = true;
+        if (GameStateManager.Instance != null)
+        {
+            GameStateManager.Instance.MarkPuzzleCompleted(puzzleId);
 
-        SceneManager.LoadScene(nextSceneName);
+            if (!string.IsNullOrWhiteSpace(successFlagId))
+                GameStateManager.Instance.SetFlag(successFlagId, true);
+
+            GameStateManager.Instance.ReturnFromPuzzle();
+            yield break;
+        }
+
+        if (!string.IsNullOrWhiteSpace(nextSceneName))
+        {
+            SceneManager.LoadScene(nextSceneName);
+        }
     }
 
     private void ClearCurrentSelectionImmediate()

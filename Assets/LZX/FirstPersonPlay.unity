@@ -29802,8 +29802,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 400, y: 225.00003}
-  m_SizeDelta: {x: 800, y: 450.00003}
+  m_AnchoredPosition: {x: 400, y: 224.99997}
+  m_SizeDelta: {x: 799.99994, y: 449.99997}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &7518514455122076688
 GameObject:
@@ -33599,7 +33599,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 5372129324470070394}
-  playerRoot: {fileID: 4820251720344732260}
   interactDistance: 3
   interactLayer:
     serializedVersion: 2
@@ -33608,12 +33607,16 @@ MonoBehaviour:
   promptUI: {fileID: 259095035952291006}
   promptText: {fileID: 1888837696374900025}
   interactPrompt: Press E to Interact
-  drawerAnimator: {fileID: 471164976883684619}
-  drawerOpenTrigger: Open
-  drawerOpenedStateName: OpenDrawer
-  chessModel: {fileID: 6252203547180656345}
-  glassObject: {fileID: 2009338236}
-  chessSceneName: ChessPuzzle
+  interactAnimator: {fileID: 0}
+  openTrigger: Open
+  openedStateName: OpenDrawer
+  revealObject: {fileID: 0}
+  puzzleSceneName: ChessPuzzle
+  returnSpawnPointId: From_Chess
+  puzzleId: MonaLisaChess
+  openedFlag: MonaLisa.drawerOpened
+  completedFlag: MonaLisa.glassRemoved
+  blockObject: {fileID: 0}
 --- !u!1 &8841865161074569080
 GameObject:
   m_ObjectHideFlags: 0

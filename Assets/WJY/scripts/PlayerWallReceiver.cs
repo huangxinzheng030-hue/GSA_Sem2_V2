@@ -13,6 +13,12 @@ public class PlayerWallReceiver : MonoBehaviour
     [Header("Timing")]
     public float reattachBlockTime = 0.15f;
 
+    [Header("Wall Jump Audio")]
+    public AudioSource wallJumpAudioSource;
+    public AudioClip wallJumpClip;
+    [Range(0f, 1f)]
+    public float wallJumpVolume = 1f;
+
     [Header("Debug")]
     public bool enableDebugLog = true;
 
@@ -23,6 +29,9 @@ public class PlayerWallReceiver : MonoBehaviour
     void Awake()
     {
         if (rb == null) rb = GetComponent<Rigidbody>();
+
+        if (wallJumpAudioSource == null)
+            wallJumpAudioSource = GetComponent<AudioSource>();
 
         if (enableDebugLog)
         {
@@ -103,6 +112,7 @@ public class PlayerWallReceiver : MonoBehaviour
             ?? collision.collider.GetComponentInParent<WallSurface>();
 
         if (wall == null) return;
+
         if (!CompareTag(wall.playerTag))
         {
             if (enableDebugLog)
@@ -165,6 +175,8 @@ public class PlayerWallReceiver : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
         rb.AddForce(force, ForceMode.VelocityChange);
 
+        PlayWallJumpSound();
+
         PlayerMovement pm = GetComponent<PlayerMovement>();
         if (pm != null)
         {
@@ -190,6 +202,14 @@ public class PlayerWallReceiver : MonoBehaviour
         }
 
         LeaveWall();
+    }
+
+    void PlayWallJumpSound()
+    {
+        if (wallJumpAudioSource == null) return;
+        if (wallJumpClip == null) return;
+
+        wallJumpAudioSource.PlayOneShot(wallJumpClip, wallJumpVolume);
     }
 
     void LeaveWall()
