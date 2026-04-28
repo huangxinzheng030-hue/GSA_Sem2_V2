@@ -16,6 +16,9 @@ public class RotateWheelByMouse : MonoBehaviour
     public float rotationMultiplier = 1f;
     public bool invert = false;
 
+    [Header("Audio")]
+    public AudioSource rotateAudio;
+
     private bool dragging = false;
     private float startMouseAngle;
     private Vector3 startEuler;
@@ -24,6 +27,13 @@ public class RotateWheelByMouse : MonoBehaviour
     {
         if (mainCamera == null)
             mainCamera = Camera.main;
+
+        if (rotateAudio != null)
+        {
+            rotateAudio.loop = true;
+            rotateAudio.playOnAwake = false;
+            rotateAudio.Stop();
+        }
     }
 
     private void OnMouseDown()
@@ -33,11 +43,21 @@ public class RotateWheelByMouse : MonoBehaviour
         dragging = true;
         startMouseAngle = GetMouseAngleFromTargetCenter();
         startEuler = rotationTarget.localEulerAngles;
+
+        if (rotateAudio != null && !rotateAudio.isPlaying)
+        {
+            rotateAudio.Play();
+        }
     }
 
     private void OnMouseUp()
     {
         dragging = false;
+
+        if (rotateAudio != null && rotateAudio.isPlaying)
+        {
+            rotateAudio.Stop();
+        }
     }
 
     private void Update()
