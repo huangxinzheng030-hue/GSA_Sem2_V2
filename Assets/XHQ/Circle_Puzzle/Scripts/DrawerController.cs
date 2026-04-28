@@ -13,10 +13,16 @@ public class DrawerController : MonoBehaviour
     [Header("解锁后显示的UI文字")]
     public GameObject successUI;
 
+    [Header("音效")]
+    public AudioClip unlockSound;          // 解锁音效，拖入 Inspector
+    [Range(0f, 1f)]
+    public float unlockSoundVolume = 1f;
+
     private Vector3 closedPos;
     private Vector3 openPos;
     private bool isOpening = false;
     private bool isOpen = false;
+    private AudioSource audioSource;
 
     void Awake()
     {
@@ -25,6 +31,12 @@ public class DrawerController : MonoBehaviour
         openPos = closedPos + openOffset;
         if (successUI != null)
             successUI.SetActive(false);
+
+        // 自动添加 AudioSource（如果没有）
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
     }
 
     void Update()
@@ -47,6 +59,16 @@ public class DrawerController : MonoBehaviour
 
     public void OpenDrawer()
     {
-        if (!isOpen) isOpening = true;
+        if (!isOpen)
+        {
+            isOpening = true;
+            PlayUnlockSound();
+        }
+    }
+
+    private void PlayUnlockSound()
+    {
+        if (unlockSound != null && audioSource != null)
+            audioSource.PlayOneShot(unlockSound, unlockSoundVolume);
     }
 }
