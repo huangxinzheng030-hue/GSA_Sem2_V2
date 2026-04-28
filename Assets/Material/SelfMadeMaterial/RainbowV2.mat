@@ -43,7 +43,7 @@ Material:
     - _DigitBrightness: 1.4
     - _HeadBrightness: 2.8
     - _Rows: 72
-    - _Speed: 1.35
+    - _Speed: 0.07
     - _TrailLength: 0.18
     m_Colors: []
   m_BuildTextureStacks: []
