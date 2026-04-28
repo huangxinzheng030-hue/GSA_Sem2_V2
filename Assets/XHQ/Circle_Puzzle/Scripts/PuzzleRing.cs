@@ -5,21 +5,33 @@ public class PuzzleRing : MonoBehaviour
 {
     [Header("拼图设置")]
     public float stepAngle = 30f;
-    public float[] correctAngles = new float[] { 0f };  
+    public float[] correctAngles = new float[] { 0f };
     public float tolerance = 10f;
 
     [Header("动画")]
     public float rotateSpeed = 300f;
 
+    [Header("音效")]
+    public AudioClip rotateSound;          // 旋转音效，拖入 Inspector
+    [Range(0f, 1f)]
+    public float rotateSoundVolume = 0.7f;
+
     private float targetAngle;
     private bool isRotating = false;
     private Renderer rend;
     private Color originalColor;
+    private AudioSource audioSource;
 
     void Start()
     {
         rend = GetComponent<Renderer>();
         if (rend) originalColor = rend.material.color;
+
+        // 自动添加 AudioSource（如果没有）
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
     }
 
     void Update()
@@ -44,6 +56,7 @@ public class PuzzleRing : MonoBehaviour
         if (isRotating) return;
         targetAngle -= stepAngle;
         isRotating = true;
+        PlayRotateSound();
         StartCoroutine(Flash());
     }
 
@@ -52,7 +65,14 @@ public class PuzzleRing : MonoBehaviour
         if (isRotating) return;
         targetAngle += stepAngle;
         isRotating = true;
+        PlayRotateSound();
         StartCoroutine(Flash());
+    }
+
+    private void PlayRotateSound()
+    {
+        if (rotateSound != null && audioSource != null)
+            audioSource.PlayOneShot(rotateSound, rotateSoundVolume);
     }
 
     public bool IsSolved()
