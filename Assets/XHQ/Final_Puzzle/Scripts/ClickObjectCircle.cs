@@ -1,67 +1,79 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class ClickObjectCircle : MonoBehaviour
 {
     public int clickIndex = 0;
     public CirclePuzzle circlePuzzle;
-    private int saveRotation = 0;
-    private float dragAngle = 0;
 
+    // 鼠标按下时记录的初始角度与旋转步数
+    private float dragAngle = 0f;
+    private int saveRotation = 0;
+    private int lastRotationForSound = 0;
+
+    // 与本圆圈联动的其他圆圈
     [SerializeField]
     public LinkToIndex[] linkTo;
 
-    private int lastSaveForPlaySound = 0;
+    // ─────────────────────────────────────────────
 
     void OnMouseDown()
     {
-        if (!circlePuzzle.gamePause)
+        if (circlePuzzle.gamePause) return;
+
+        // 计算鼠标相对圆圈中心的角度
+        Vector3 offset = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
+        dragAngle = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg;
+
+        // 记录初始旋转步数
+        saveRotation = circlePuzzle.circleRotation[clickIndex];
+        lastRotationForSound = saveRotation;
+
+        // 记录所有联动圆圈的初始旋转步数
+        for (int i = 0; i < linkTo.Length; i++)
         {
-            Vector3 pos = Camera.main.WorldToScreenPoint(transform.position);
-            pos = Input.mousePosition - pos;
-            dragAngle = Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg;
-
-            saveRotation = circlePuzzle.circleRotation[clickIndex];
-            lastSaveForPlaySound = saveRotation;
-
-            for (int i = 0; i < linkTo.Length; i++)
-            {
-                linkTo[i].saveRotation = circlePuzzle.circleRotation[linkTo[i].index];
-            }
+            linkTo[i].saveRotation = circlePuzzle.circleRotation[linkTo[i].index];
         }
     }
 
-    private void OnMouseDrag()
+    void OnMouseDrag()
     {
-        if (!circlePuzzle.gamePause)
+        if (circlePuzzle.gamePause) return;
+
+        // 当前角度与初始角度的差值（单位：度）
+        Vector3 offset = Input.mousePosition - Camera.main.WorldToScreenPoint(transform.position);
+        int deltaAngle = (int)(Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg - dragAngle);
+
+        // 更新主圆圈旋转（每步 18 度）
+        circlePuzzle.circleRotation[clickIndex] = (-deltaAngle / 18) + saveRotation;
+
+        // 旋转步数变化时播放音效
+        if (lastRotationForSound != circlePuzzle.circleRotation[clickIndex])
         {
-            Vector3 pos = Camera.main.WorldToScreenPoint(transform.position);
-            pos = Input.mousePosition - pos;
-            int rotation = (int)((Mathf.Atan2(pos.y, pos.x) * Mathf.Rad2Deg) - dragAngle);
+            lastRotationForSound = circlePuzzle.circleRotation[clickIndex];
+            circlePuzzle.PlayDragSound(clickIndex);
+        }
 
-            circlePuzzle.circleRotation[clickIndex] = (-rotation / 18) + saveRotation;
-
-            if (lastSaveForPlaySound != circlePuzzle.circleRotation[clickIndex])
-            {
-                lastSaveForPlaySound = circlePuzzle.circleRotation[clickIndex];
-                circlePuzzle.PlayDragSound(clickIndex);
-            }
-
-            for (int i = 0; i < linkTo.Length; i++)
-            {
-                circlePuzzle.circleRotation[linkTo[i].index] = (-(rotation * linkTo[i].dir) / 18) + linkTo[i].saveRotation;
-            }
+        // 更新所有联动圆圈（dir 控制同向/反向）
+        for (int i = 0; i < linkTo.Length; i++)
+        {
+            circlePuzzle.circleRotation[linkTo[i].index] =
+                (-(deltaAngle * linkTo[i].dir) / 18) + linkTo[i].saveRotation;
         }
     }
 }
 
+/// <summary>
+/// 描述一个与当前圆圈联动的圆圈索引及旋转方向
+/// </summary>
 [Serializable]
 public class LinkToIndex
 {
     [HideInInspector]
     public int saveRotation = 0;
+
     public int index = 0;
+
+    // 1 = 反向旋转，-1 = 同向旋转
     public int dir = 1;
 }

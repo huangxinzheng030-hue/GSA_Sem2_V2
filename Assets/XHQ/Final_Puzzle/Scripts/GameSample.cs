@@ -1,30 +1,30 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class GameSample : MonoBehaviour
 {
     public CirclePuzzle circlePuzzle;
-
     public GameObject showUI;
 
-    void Start ()
+    [Header("提示面板（可选）")]
+    public HintPanel hintPanel;
+
+    void Start()
     {
         circlePuzzle.onComplete += OnComplete;
     }
 
     private void OnComplete()
     {
+        hintPanel?.HideHint();
         showUI.SetActive(true);
         circlePuzzle.gamePause = true;
     }
 
-    public void CloseUI ()
+    /// <summary>
+    /// 点击"Steal It"按钮：关闭 Complete 面板
+    /// </summary>
+    public void StealIt()
     {
         showUI.SetActive(false);
-        circlePuzzle.gamePause = false;
-        circlePuzzle.Setup();
     }
 }
