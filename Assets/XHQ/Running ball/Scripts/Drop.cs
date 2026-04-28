@@ -1,21 +1,34 @@
 using UnityEngine;
 using System.Collections;
 
-public class MazeFinalController : MonoBehaviour
+public class Drop : MonoBehaviour
 {
     [Header("Assign in Inspector")]
-    public GameObject mazeObject;   
-    public GameObject painting;     
+    public GameObject mazeObject;
+    public GameObject painting;
     public AudioSource unlockSound;
     public GameObject glassCover;
 
+    [Header("UI")]
+    [Tooltip("谜题完成后显示的按钮或按钮所在的Panel")]
+    public GameObject completeButton;
+
     [Header("Settings")]
-    public float pauseDelay = 1.5f;   
-    public float slideSpeed = 10f;   
+    public float pauseDelay = 1.5f;
+    public float slideSpeed = 10f;
     public float fallDistance = 25f;
-    public float glassFadeDelay = 1f;  
+    public float glassFadeDelay = 1f;
 
     private bool isTriggered = false;
+
+    private void Start()
+    {
+        // 游戏开始时先隐藏按钮
+        if (completeButton != null)
+        {
+            completeButton.SetActive(false);
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -44,8 +57,8 @@ public class MazeFinalController : MonoBehaviour
         Rigidbody mazeRb = mazeObject.GetComponent<Rigidbody>();
         if (mazeRb != null)
         {
-            mazeRb.isKinematic = true; 
-            mazeRb.detectCollisions = false; 
+            mazeRb.isKinematic = true;
+            mazeRb.detectCollisions = false;
         }
 
         Animator mazeAnim = mazeObject.GetComponent<Animator>();
@@ -68,13 +81,19 @@ public class MazeFinalController : MonoBehaviour
                 startPos.z + traveled
             );
 
-            yield return null; 
+            yield return null;
         }
 
         Destroy(mazeObject);
 
         if (glassCover != null)
             Destroy(glassCover, glassFadeDelay);
+
+        // 谜题完成后显示按钮
+        if (completeButton != null)
+        {
+            completeButton.SetActive(true);
+        }
 
         Debug.Log("Maze Sequence Completed.");
     }
