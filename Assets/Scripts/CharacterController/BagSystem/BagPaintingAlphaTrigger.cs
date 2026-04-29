@@ -5,21 +5,21 @@ using TMPro;
 
 public class BagPaintingAlphaTrigger : MonoBehaviour
 {
-    [Header("Painting UI Images to check")]
+    [Header("Required Painting UI Images")]
     public Image[] requiredPaintingImages;
 
-    [Header("Alpha check")]
-    [Tooltip("Check this if the image is visible when unlocked. If the image becomes fully transparent when unlocked, uncheck this.")]
+    [Header("Alpha Check")]
+    [Tooltip("Enable this if unlocked paintings become visible. Disable it if unlocked paintings become transparent.")]
     public bool unlockedWhenAlphaGreaterThan = true;
 
     [Range(0f, 1f)]
     public float alphaThreshold = 0.5f;
 
-    [Header("Trigger story only once")]
+    [Header("Trigger Once")]
     public string storyFlagId = "Story.AllRequiredPaintingsUnlocked";
     public bool triggerOnlyOnce = true;
 
-    [Header("Check interval")]
+    [Header("Check Timing")]
     public float checkInterval = 0.5f;
 
     [Header("Dialogue UI")]
@@ -27,16 +27,20 @@ public class BagPaintingAlphaTrigger : MonoBehaviour
     public TMP_Text dialogueText;
 
     [TextArea(2, 5)]
-    public string dialogueContent = "All key paintings have been collected. The exit is now open.";
+    public string dialogueContent = "All required paintings have been collected. The exit is now unlocked.";
 
     public float dialogueDuration = 3f;
 
-    [Header("Exit unlock")]
-    public GameObject exitObject;
-    public GameObject blockedObject;
+    [Header("Exit Unlock - Objects To Show")]
+    public GameObject[] exitObjects;
+
+    [Header("Exit Unlock - Objects To Hide")]
+    public GameObject[] blockedObjects;
+
+    [Header("Exit Trigger")]
     public Collider exitCollider;
 
-    [Header("Optional audio")]
+    [Header("Optional Audio")]
     public AudioSource storyAudio;
 
     private bool triggered = false;
@@ -125,15 +129,30 @@ public class BagPaintingAlphaTrigger : MonoBehaviour
 
     private void UnlockExit()
     {
-        if (exitObject != null)
-            exitObject.SetActive(true);
+        // Show multiple exit-related objects.
+        if (exitObjects != null)
+        {
+            foreach (GameObject obj in exitObjects)
+            {
+                if (obj != null)
+                    obj.SetActive(true);
+            }
+        }
 
-        if (blockedObject != null)
-            blockedObject.SetActive(false);
+        // Hide multiple blocking objects.
+        if (blockedObjects != null)
+        {
+            foreach (GameObject obj in blockedObjects)
+            {
+                if (obj != null)
+                    obj.SetActive(false);
+            }
+        }
 
+        // Enable the exit trigger.
         if (exitCollider != null)
             exitCollider.enabled = true;
 
-        Debug.Log("BagPaintingAlphaTrigger: All specified paintings have been unlocked. Exit opened.");
+        Debug.Log("BagPaintingAlphaTrigger: All required paintings are unlocked. Exit is now available.");
     }
 }
