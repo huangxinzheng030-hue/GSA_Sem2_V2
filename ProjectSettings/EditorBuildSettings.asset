@@ -29,9 +29,24 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Louvre map.unity
     guid: 503c9957507d798439b1d2d49ef4047f
-  - enabled: 0
-    path: Assets/Scenes/Gabriel/Puzzle scene1.unity
+  - enabled: 1
+    path: Assets/LZX/ChessPuzzle.unity
+    guid: fa835d65a5e54bf4cbf442718afe5b60
+  - enabled: 1
+    path: Assets/XHQ/Scenes/Puzzle2.unity
+    guid: 613d5e1a818f31948b58809c18e5c9a3
+  - enabled: 1
+    path: Assets/Scenes/Gabriel/Puzzle3.unity
     guid: a269b60496418d94083a92e320215f44
+  - enabled: 1
+    path: Assets/WJY/Puzzle4.unity
+    guid: f835474f0eb721f48af58beb219aeb13
+  - enabled: 1
+    path: Assets/XHQ/Scenes/Puzzle5.unity
+    guid: 09ff886b26147ba40b0a8af636689e28
+  - enabled: 1
+    path: Assets/Scenes/Ending.unity
+    guid: c941116702ad8c04b8a567f87d6ee26b
   - enabled: 0
     path: Assets/WJY/Test.unity
     guid: fadddf44e261cf049b80225568105401
@@ -45,14 +60,8 @@ EditorBuildSettings:
     path: Assets/XHQ/Scenes/1.unity
     guid: 04c2e6117cbe40a4d9d184b64222c29e
   - enabled: 0
-    path: Assets/XHQ/Scenes/Quiz2.unity
-    guid: 09ff886b26147ba40b0a8af636689e28
-  - enabled: 0
     path: Assets/Scenes/Test.unity
     guid: 0e2e2c4f22e31a94bb2144c35590610a
-  - enabled: 0
-    path: Assets/LZX/ChessPuzzle.unity
-    guid: fa835d65a5e54bf4cbf442718afe5b60
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

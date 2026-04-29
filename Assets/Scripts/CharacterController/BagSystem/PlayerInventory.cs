@@ -25,7 +25,7 @@ public class PlayerInventory : MonoBehaviour
 
     private bool restoredFromState = false;
 
-    private void Start()
+    public void Start()
     {
         RestoreFromGameState();
     }
@@ -66,7 +66,7 @@ public class PlayerInventory : MonoBehaviour
     // =========================
     // 基础功能
     // =========================
-    private void SaveToGameState()
+    public void SaveToGameState()
     {
         if (GameStateManager.Instance == null) return;
 
@@ -121,8 +121,11 @@ public class PlayerInventory : MonoBehaviour
         }
 
         SelectedIndex = Mathf.Clamp(saved.selectedIndex, 0, slotCount - 1);
+
         EquipFromSlot(SelectedIndex);
         OnChanged?.Invoke();
+
+        StartCoroutine(RefreshInventoryNextFrame());
     }
     public ToolItem GetSlot(int index)
     {
@@ -427,6 +430,14 @@ public class PlayerInventory : MonoBehaviour
 
         EquipFromSlot(SelectedIndex);
         SaveToGameState();
+        OnChanged?.Invoke();
+    }
+
+    private System.Collections.IEnumerator RefreshInventoryNextFrame()
+    {
+        yield return null;
+
+        EquipFromSlot(SelectedIndex);
         OnChanged?.Invoke();
     }
 }

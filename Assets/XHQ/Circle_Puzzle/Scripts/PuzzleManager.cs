@@ -12,6 +12,9 @@ public class PuzzleManager : MonoBehaviour
     [Header("UI 提示（可选）")]
     public TMP_Text ringIndexText;
 
+    [Header("Complete UI")]
+    public GameObject completePanel; // 这里拖你的完成面板，里面放返回按钮
+
     [Header("开场指导文字")]
     public TMP_Text tutorialText;          // 拖入 Inspector，显示操作说明
     public float tutorialDisplayTime = 3f; // 显示秒数
@@ -26,6 +29,9 @@ public class PuzzleManager : MonoBehaviour
 
     void Start()
     {
+        if (completePanel != null)
+            completePanel.SetActive(false);
+
         foreach (var ring in rings)
             ring.Randomize();
 
@@ -72,8 +78,10 @@ public class PuzzleManager : MonoBehaviour
         {
             if (!ring.IsSolved()) return;
         }
-
+        
         isSolved = true;
+        // 谜题完成后显示按钮/面板
+        completePanel.SetActive(true);
         Debug.Log("The puzzle is complete!");
         DrawerController.Instance.OpenDrawer();
     }

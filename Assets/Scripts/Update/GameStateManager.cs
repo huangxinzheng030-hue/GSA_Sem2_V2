@@ -141,6 +141,19 @@ public class GameStateManager : MonoBehaviour, ISceneFlowService
             spawnPointId = returnSpawnPointId
         });
 
+        // 进入 Puzzle 前，强制保存当前背包、Hotbar、选中槽位、手持状态
+        PlayerInventory inventory = FindFirstObjectByType<PlayerInventory>();
+
+        if (inventory != null)
+        {
+            inventory.SaveToGameState();
+            Debug.Log("GameStateManager: 进入 Puzzle 前已保存背包状态。");
+        }
+        else
+        {
+            Debug.LogWarning("GameStateManager: 进入 Puzzle 前没有找到 PlayerInventory。");
+        }
+
         SceneManager.LoadScene(puzzleSceneName);
     }
 
@@ -242,5 +255,6 @@ public class GameStateManager : MonoBehaviour, ISceneFlowService
         pendingReturnSceneName = "";
         pendingSpawnPointId = "";
         SetFlag("ReturningFromPuzzle", false);
+
     }
 }
