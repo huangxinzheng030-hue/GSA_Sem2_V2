@@ -927,9 +927,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 440834146}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.020646019, y: 0.7018447, z: 0.020359023, w: 0.7117397}
-  m_LocalPosition: {x: 21.786882, y: 965.8145, z: -2570.3345}
-  m_LocalScale: {x: 10.698094, y: 10.698096, z: 10.698094}
+  m_LocalRotation: {x: 9.3132246e-10, y: -0, z: -0.0000000018626449, w: 1}
+  m_LocalPosition: {x: 172.14134, y: 90.278, z: -0.15159082}
+  m_LocalScale: {x: 1.108698, y: 1.1086979, z: 1.108698}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 677178320}
@@ -939,7 +939,7 @@ Transform:
   - {fileID: 1139339817}
   - {fileID: 331782094}
   - {fileID: 804994233}
-  m_Father: {fileID: 1799177505}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &480215174
 GameObject:
@@ -1333,7 +1333,7 @@ Transform:
   m_GameObject: {fileID: 633035273}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -0.0047836304, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2456,8 +2456,8 @@ Camera:
   near clip plane: 0.01
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 0.11
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2482,7 +2482,7 @@ Transform:
   m_GameObject: {fileID: 1134756519}
   serializedVersion: 2
   m_LocalRotation: {x: -0.020646023, y: -0.7018447, z: -0.020359026, w: 0.7117397}
-  m_LocalPosition: {x: 0.22749114, y: 0.0031950707, z: -0.0028457642}
+  m_LocalPosition: {x: 0.22749114, y: -0.003, z: -0.0028457642}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3729,7 +3729,6 @@ RectTransform:
   m_Children:
   - {fileID: 1816898747}
   - {fileID: 1843333554}
-  - {fileID: 440834147}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -4423,6 +4422,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 1134756522}
   - {fileID: 375165687}
+  - {fileID: 440834147}
   - {fileID: 633035274}
   - {fileID: 1799177505}
   - {fileID: 900426194}
