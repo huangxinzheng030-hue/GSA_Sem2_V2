@@ -39,8 +39,14 @@ EditorBuildSettings:
     path: Assets/Scenes/Gabriel/Puzzle3.unity
     guid: a269b60496418d94083a92e320215f44
   - enabled: 1
+    path: Assets/WJY/Puzzle4.unity
+    guid: f835474f0eb721f48af58beb219aeb13
+  - enabled: 1
     path: Assets/XHQ/Scenes/Puzzle5.unity
     guid: 09ff886b26147ba40b0a8af636689e28
+  - enabled: 1
+    path: Assets/Scenes/Ending.unity
+    guid: c941116702ad8c04b8a567f87d6ee26b
   - enabled: 0
     path: Assets/WJY/Test.unity
     guid: fadddf44e261cf049b80225568105401

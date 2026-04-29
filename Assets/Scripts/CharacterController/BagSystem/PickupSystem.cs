@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+// 拾取系统：处理玩家面向中心射线的物体交互、拾取至手中、放下、投掷、工具类物品加入背包以及高亮显示可拾取物体。
 public class PickupSystem : MonoBehaviour
 {
     [Header("References")]
@@ -29,51 +30,57 @@ public class PickupSystem : MonoBehaviour
     public string selectableTag = "Pickup";
     public Material highlightMaterial;
 
-    Rigidbody heldRb;
-    Collider heldCollider;
+    private Rigidbody heldRb;
+    private Collider heldCollider;
 
-    float cooldown;
+    private float cooldown;
 
-    Renderer currentRenderer;
-    Material[] originalMaterials;
+    private Renderer currentRenderer;
+    private Material[] originalMaterials;
 
-    void Start()
+    private void Start()
     {
         if (holdPoint == null)
             Debug.LogWarning("PickupSystem: holdPoint not set");
 
         if (inventory == null)
             Debug.LogWarning("PickupSystem: inventory not set");
+
+        if (cam == null)
+            Debug.LogWarning("PickupSystem: cam not set");
     }
 
-    void Update()
+    private void Update()
     {
+        // 每帧更新冷却、选择高亮与输入处理
         UpdateCooldown();
         UpdateSelection();
         HandleInteractInput();
         HandleNormalItemInput();
     }
 
-    void FixedUpdate()
+    private void FixedUpdate()
     {
+        // 在物理更新中保持被持有物体跟随 holdPoint（位置与旋转）
         if (heldRb == null || holdPoint == null) return;
 
-        // 强制贴住 hand point（简单稳定）
         heldRb.transform.position = holdPoint.position;
         heldRb.transform.rotation = holdPoint.rotation;
     }
 
     // =========================
-    // 输入逻辑
+    // 输入逻辑（按键响应）
     // =========================
 
-    void UpdateCooldown()
+    // 更新交互冷却计时器
+    private void UpdateCooldown()
     {
         if (cooldown > 0f)
             cooldown -= Time.deltaTime;
     }
 
-    void HandleInteractInput()
+    // 处理“交互”按键（拾取/放下）
+    private void HandleInteractInput()
     {
         if (!Input.GetKeyDown(interactKey)) return;
 
@@ -87,7 +94,8 @@ public class PickupSystem : MonoBehaviour
         }
     }
 
-    void HandleNormalItemInput()
+    // 处理持有物体的丢弃与投掷输入
+    private void HandleNormalItemInput()
     {
         if (heldRb == null) return;
 
@@ -99,71 +107,76 @@ public class PickupSystem : MonoBehaviour
     }
 
     // =========================
-    // 核心逻辑
+    // 核心交互逻辑
     // =========================
 
-    void InteractTryPickup()
+    // 尝试通过中心射线进行交互（拾取或将工具类加入背包）
+    private void InteractTryPickup()
     {
         if (cooldown > 0f || cam == null) return;
 
         if (!RaycastCenter(out RaycastHit hit)) return;
 
-        // ✅ 优先 ToolItem（进入背包）
+        // 1. 优先检测 ToolItem：如果是工具类物品则尝试加入背包
         ToolItem toolItem = hit.collider.GetComponentInParent<ToolItem>();
 
         if (toolItem != null)
         {
-            if (inventory == null)
-            {
-                Debug.LogWarning("PickupSystem: ToolItem detect there is no inventory");
-                return;
-            }
-
-            WorldCollectible collectible = hit.collider.GetComponentInParent<WorldCollectible>();
-
-            bool ok = inventory.AddTool(toolItem);
-
-            if (ok)
-            {
-                if (collectible != null)
-                    collectible.MarkCollected();
-
-                heldRb = null;
-                heldCollider = null;
-            }
-
+            TryPickupToolItem(hit, toolItem);
             return;
         }
 
-        if (toolItem != null)
-        {
-            if (inventory == null)
-            {
-                Debug.LogWarning("PickupSystem: ToolItem detect there is no inventory");
-                return;
-            }
-
-            bool ok = inventory.AddTool(toolItem);
-
-            if (ok)
-            {
-                heldRb = null;
-                heldCollider = null;
-            }
-
-            return; // 🔥 关键：不再走普通拾取
-        }
-
-        // 普通物体
-        if (!hit.collider.CompareTag("Pickup")) return;
+        // 2. 普通可拾取物：检查 Tag，并尝试拾取到手中
+        if (!hit.collider.CompareTag(selectableTag) && !HasTagInHierarchy(hit.collider.gameObject, selectableTag))
+            return;
 
         Rigidbody rb = hit.collider.attachedRigidbody;
+
+        if (rb == null)
+            rb = hit.collider.GetComponentInParent<Rigidbody>();
+
         if (rb == null) return;
 
         PickupNormal(rb, hit.collider);
     }
 
-    void PickupNormal(Rigidbody rb, Collider col)
+    // 处理工具类物品拾取（加入背包并标记场景物体已被收集）
+    private void TryPickupToolItem(RaycastHit hit, ToolItem toolItem)
+    {
+        if (inventory == null)
+        {
+            Debug.LogWarning("PickupSystem: ToolItem detected but inventory is null.");
+            return;
+        }
+
+        // 注意：必须在 AddTool 之前先拿 WorldCollectible。
+        // 因为 AddTool 可能会把 ToolItem 从场景父物体中拆出去并收进背包。
+        WorldCollectible collectible = hit.collider.GetComponentInParent<WorldCollectible>();
+
+        bool added = inventory.AddTool(toolItem);
+
+        if (!added)
+        {
+            Debug.Log("PickupSystem: 背包已满或无法添加该物品。");
+            return;
+        }
+
+        // 只有真正成功加入背包，才记录这个场景物体已经被拿走。
+        if (collectible != null)
+        {
+            collectible.MarkCollected();
+        }
+
+        // 确保当前没有持有刚刚拾取的物体（工具直接移入背包）
+        heldRb = null;
+        heldCollider = null;
+        cooldown = 0.1f;
+    }
+
+
+
+    // 将普通物体拾取到玩家手中（禁用重力并设为 kinematic，附到 holdPoint）
+    private void PickupNormal(Rigidbody rb, Collider col)
     {
         if (holdPoint == null) return;
 
@@ -173,7 +186,7 @@ public class PickupSystem : MonoBehaviour
         heldRb.useGravity = false;
         heldRb.isKinematic = true;
 
-        if (playerCollider != null)
+        if (playerCollider != null && heldCollider != null)
             Physics.IgnoreCollision(heldCollider, playerCollider, true);
 
         heldRb.transform.SetParent(holdPoint);
@@ -183,7 +196,8 @@ public class PickupSystem : MonoBehaviour
         cooldown = 0.1f;
     }
 
-    void DropNormal()
+    // 放下当前手持物体（恢复物理属性并取消父子关系）
+    private void DropNormal()
     {
         if (heldRb == null) return;
 
@@ -201,7 +215,8 @@ public class PickupSystem : MonoBehaviour
         cooldown = 0.1f;
     }
 
-    void ThrowNormal()
+    // 投掷当前手持物体（先放下再施加冲量）
+    private void ThrowNormal()
     {
         if (heldRb == null) return;
 
@@ -209,16 +224,15 @@ public class PickupSystem : MonoBehaviour
 
         DropNormal();
 
-        Vector3 dir = (cam != null) ? cam.transform.forward : transform.forward;
+        Vector3 dir = cam != null ? cam.transform.forward : transform.forward;
 
         rb.AddForce(dir * throwForce + Vector3.up * throwUpForce, ForceMode.Impulse);
     }
 
-    // =========================
-    // Raycast
-    // =========================
 
-    bool RaycastCenter(out RaycastHit hit)
+
+    // 从摄像机中心发射射线检测可交互物体
+    private bool RaycastCenter(out RaycastHit hit)
     {
         if (cam == null)
         {
@@ -231,11 +245,9 @@ public class PickupSystem : MonoBehaviour
         return Physics.Raycast(ray, out hit, interactDistance, interactLayer);
     }
 
-    // =========================
-    // 高亮系统
-    // =========================
 
-    void UpdateSelection()
+    // 更新中心准星处物体的高亮显示（使用替换材质实现）
+    private void UpdateSelection()
     {
         if (cam == null || highlightMaterial == null) return;
 
@@ -259,11 +271,15 @@ public class PickupSystem : MonoBehaviour
                         originalMaterials = r.sharedMaterials;
 
                         Material[] newMats = new Material[originalMaterials.Length];
+
                         for (int i = 0; i < newMats.Length; i++)
+                        {
                             newMats[i] = highlightMaterial;
+                        }
 
                         r.sharedMaterials = newMats;
                     }
+
                     return;
                 }
             }
@@ -272,7 +288,8 @@ public class PickupSystem : MonoBehaviour
         ClearHighlight();
     }
 
-    void ClearHighlight()
+    // 清除当前高亮，恢复原始材质
+    private void ClearHighlight()
     {
         if (currentRenderer != null && originalMaterials != null)
         {
@@ -283,13 +300,16 @@ public class PickupSystem : MonoBehaviour
         originalMaterials = null;
     }
 
-    bool HasTagInHierarchy(GameObject obj, string tag)
+    // 向上遍历父级以检测指定 Tag（用于支持父对象标记）
+    private bool HasTagInHierarchy(GameObject obj, string tag)
     {
         Transform t = obj.transform;
 
         while (t != null)
         {
-            if (t.CompareTag(tag)) return true;
+            if (t.CompareTag(tag))
+                return true;
+
             t = t.parent;
         }
 
