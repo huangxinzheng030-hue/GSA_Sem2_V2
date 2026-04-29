@@ -10202,7 +10202,7 @@ MonoBehaviour:
   rotatePlayerToNewUp: 1
   rotateDuration: 1
   clearVelocityOnTurn: 1
-  resetToNormalGravity: 1
+  resetToNormalGravity: 0
   enableDebugLog: 1
 --- !u!1 &973779342
 GameObject:
@@ -18939,7 +18939,7 @@ Transform:
   m_GameObject: {fileID: 1939162550}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 75, y: -9, z: 883}
+  m_LocalPosition: {x: 75, y: -9, z: 871}
   m_LocalScale: {x: 1.0972549, y: 116.74092, z: 116.2233}
   m_ConstrainProportionsScale: 0
   m_Children:
