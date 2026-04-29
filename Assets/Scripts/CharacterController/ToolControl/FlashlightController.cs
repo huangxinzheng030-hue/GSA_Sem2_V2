@@ -3,7 +3,8 @@ using UnityEngine;
 public class FlashlightController : MonoBehaviour
 {
     public Light flashlight;   // мо Spot Light
-    private bool isOn = false;
+    private bool isOn = true;
+    public GameObject text;
 
     void Update()
     {
@@ -11,6 +12,7 @@ public class FlashlightController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             ToggleLight();
+            text.SetActive(false);
         }
     }
 
