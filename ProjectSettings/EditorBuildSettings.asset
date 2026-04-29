@@ -45,6 +45,9 @@ EditorBuildSettings:
     path: Assets/XHQ/Scenes/Puzzle5.unity
     guid: 09ff886b26147ba40b0a8af636689e28
   - enabled: 1
+    path: Assets/XHQ/Scenes/Puzzle6.unity
+    guid: 60b1dbf8a1927f643b66785db4775f2d
+  - enabled: 1
     path: Assets/Scenes/Ending.unity
     guid: c941116702ad8c04b8a567f87d6ee26b
   - enabled: 0
