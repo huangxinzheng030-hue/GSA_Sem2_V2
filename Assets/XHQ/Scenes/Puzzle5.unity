@@ -217,8 +217,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hintText: {fileID: 1627565130}
   initialShowDuration: 3
-  winDelay: 1
-  winShowDuration: 3
 --- !u!4 &188543356
 Transform:
   m_ObjectHideFlags: 0
@@ -1191,7 +1189,7 @@ MonoBehaviour:
   pauseDelay: 1
   slideSpeed: 10
   fallDistance: 25
-  glassFadeDelay: 1
+  glassFadeDelay: 0
 --- !u!114 &818658312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1205,7 +1203,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camManager: {fileID: 163735529}
-  uiManager: {fileID: 188543355}
 --- !u!114 &818658313
 MonoBehaviour:
   m_ObjectHideFlags: 0
