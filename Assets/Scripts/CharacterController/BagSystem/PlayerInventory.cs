@@ -433,6 +433,11 @@ public class PlayerInventory : MonoBehaviour
         OnChanged?.Invoke();
     }
 
+    public void ForceRefreshInventoryView()
+    {
+        EquipFromSlot(SelectedIndex);
+        OnChanged?.Invoke();
+    }
     private System.Collections.IEnumerator RefreshInventoryNextFrame()
     {
         yield return null;

@@ -40,4 +40,20 @@ public class HotbarUI : MonoBehaviour
             if (tool != null) Debug.Log($"UI slot {i}: tool={tool.name}, data={(tool.data ? tool.data.name : "NULL")}");
         }
     }
+
+    public void RebindInventory(PlayerInventory newInventory)
+    {
+        if (inventory != null)
+        {
+            inventory.OnChanged -= Refresh;
+        }
+
+        inventory = newInventory;
+
+        if (inventory != null)
+        {
+            inventory.OnChanged += Refresh;
+            Refresh();
+        }
+    }
 }
